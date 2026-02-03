@@ -1,0 +1,22 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "quicksight:RegisterUser",
+        "quicksight:DescribeUser",
+        "quicksight:ListUsers",
+        "quicksight:UpdateUser",
+        "quicksight:GetDashboardEmbedUrl",
+        "quicksight:GenerateEmbedUrlForAnonymousUser",
+        "quicksight:DescribeDashboard",
+        "quicksight:ListDashboards"
+      ],
+      "Resource": [
+        "arn:aws:quicksight:ap-south-1:737185589565:user/default/*",
+        "arn:aws:quicksight:ap-south-1:737185589565:dashboard/*"
+      ]
+    }
+  ]
+}
