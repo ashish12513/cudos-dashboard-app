@@ -41,81 +41,99 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchAllData = async (accountId?: string) => {
-      try {
-        const accountParam = accountId ? `?accountId=${accountId}` : ''
-        
-        const [costRes, usageRes, computeRes, trendsRes, securityRes] = await Promise.all([
-          fetch(`/api/cost-metrics${accountParam}`),
-          fetch(`/api/usage-metrics${accountParam}`),
-          fetch(`/api/compute-metrics${accountParam}`),
-          fetch(`/api/trends-metrics${accountParam}`),
-          fetch(`/api/security-metrics${accountParam}`)
-        ])
+  const fetchAllData = async (accountId?: string) => {
+    try {
+      const accountParam = accountId ? `?accountId=${accountId}` : ''
+      console.log('🔄 Fetching dashboard data...')
+      
+      const [costRes, usageRes, computeRes, trendsRes, securityRes] = await Promise.all([
+        fetch(`/api/cost-metrics${accountParam}`),
+        fetch(`/api/usage-metrics${accountParam}`),
+        fetch(`/api/compute-metrics${accountParam}`),
+        fetch(`/api/trends-metrics${accountParam}`),
+        fetch(`/api/security-metrics${accountParam}`)
+      ])
 
-        const [cost, usage, compute, trends, security] = await Promise.all([
-          costRes.json(),
-          usageRes.json(),
-          computeRes.json(),
-          trendsRes.json(),
-          securityRes.json()
-        ])
+      console.log('📊 API Response Status:', {
+        cost: costRes.status,
+        usage: usageRes.status,
+        compute: computeRes.status,
+        trends: trendsRes.status,
+        security: securityRes.status
+      })
 
-        setData({
-          cost: cost.data,
-          usage: usage.data,
-          compute: compute.data,
-          trends: trends.data,
-          security: security.data
-        })
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error)
-        // Set fallback data only if API calls fail
-        setData({
-          cost: {
-            totalSpent: 12450,
-            monthlyGrowth: 8.5,
-            budgetUsed: 73,
-            topServices: [
-              { service: 'EC2', cost: 4200 },
-              { service: 'S3', cost: 1800 },
-              { service: 'RDS', cost: 2100 }
-            ]
-          },
-          usage: {
-            ec2Instances: 247,
-            runningInstances: 189,
-            storageUsageTB: 1.247,
-            dataTransferGB: 45230,
-            avgUtilization: 73
-          },
-          compute: {
-            ec2Running: 189,
-            ec2Stopped: 58,
-            lambdaFunctions: 47,
-            ecsClusters: 3,
-            totalCompute: 297
-          },
-          trends: {
-            monthlyGrowth: 8.5,
-            sixMonthGrowth: 24.3,
-            yearlyGrowth: 31.7,
-            nextMonthForecast: 13750,
-            efficiencyScore: 87
-          },
-          security: {
-            securityScore: 87,
-            complianceScore: 92,
-            criticalFindings: 2,
-            mfaPercentage: 75
-          }
-        })
-      } finally {
-        setLoading(false)
-      }
+      const [cost, usage, compute, trends, security] = await Promise.all([
+        costRes.json(),
+        usageRes.json(),
+        computeRes.json(),
+        trendsRes.json(),
+        securityRes.json()
+      ])
+
+      console.log('✅ Real AWS Data Received:', {
+        totalSpent: cost.data?.totalSpent,
+        ec2Instances: usage.data?.ec2Instances,
+        lambdaFunctions: compute.data?.lambdaFunctions,
+        costSuccess: cost.success,
+        usageSuccess: usage.success
+      })
+
+      setData({
+        cost: cost.data,
+        usage: usage.data,
+        compute: compute.data,
+        trends: trends.data,
+        security: security.data
+      })
+    } catch (error) {
+      console.error('❌ Failed to fetch dashboard data:', error)
+      console.log('🔄 Using fallback data due to error')
+      // Set fallback data only if API calls fail
+      setData({
+        cost: {
+          totalSpent: 12450,
+          monthlyGrowth: 8.5,
+          budgetUsed: 73,
+          topServices: [
+            { service: 'EC2', cost: 4200 },
+            { service: 'S3', cost: 1800 },
+            { service: 'RDS', cost: 2100 }
+          ]
+        },
+        usage: {
+          ec2Instances: 247,
+          runningInstances: 189,
+          storageUsageTB: 1.247,
+          dataTransferGB: 45230,
+          avgUtilization: 73
+        },
+        compute: {
+          ec2Running: 189,
+          ec2Stopped: 58,
+          lambdaFunctions: 47,
+          ecsClusters: 3,
+          totalCompute: 297
+        },
+        trends: {
+          monthlyGrowth: 8.5,
+          sixMonthGrowth: 24.3,
+          yearlyGrowth: 31.7,
+          nextMonthForecast: 13750,
+          efficiencyScore: 87
+        },
+        security: {
+          securityScore: 87,
+          complianceScore: 92,
+          criticalFindings: 2,
+          mfaPercentage: 75
+        }
+      })
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     // Initial load
     const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
     fetchAllData(savedAccount || undefined)
@@ -176,10 +194,25 @@ export default function Dashboard() {
     <Layout>
       <div className="space-y-8">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Cost Intelligence</h1>
-          <p className="text-gray-600 text-lg font-medium mt-2">
-            Comprehensive AWS cost management, resource monitoring, and analytics dashboard
-          </p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Cost Intelligence</h1>
+              <p className="text-gray-600 text-lg font-medium mt-2">
+                Comprehensive AWS cost management, resource monitoring, and analytics dashboard (v1.1)
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setLoading(true)
+                setData(null)
+                const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
+                fetchAllData(savedAccount || undefined)
+              }}
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              🔄 Refresh Data
+            </button>
+          </div>
         </div>
 
         {/* Cost Overview Cards */}
