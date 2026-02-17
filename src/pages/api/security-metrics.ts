@@ -8,10 +8,10 @@ AWS.config.update({
   secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY,
 })
 
-const securityHub = new AWS.SecurityHub({ region: process.env.AWS_REGION })
-const guardDuty = new AWS.GuardDuty({ region: process.env.AWS_REGION })
-const configService = new AWS.ConfigService({ region: process.env.AWS_REGION })
-const iam = new AWS.IAM({ region: process.env.AWS_REGION })
+const securityHub = new AWS.SecurityHub({ region: process.env.CLOUD_REGION })
+const guardDuty = new AWS.GuardDuty({ region: process.env.CLOUD_REGION })
+const configService = new AWS.ConfigService({ region: process.env.CLOUD_REGION })
+const iam = new AWS.IAM({ region: process.env.CLOUD_REGION })
 
 export default async function handler(
   req: NextApiRequest,

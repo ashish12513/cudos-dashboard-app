@@ -8,10 +8,10 @@ AWS.config.update({
   secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY,
 })
 
-const ec2 = new AWS.EC2({ region: process.env.AWS_REGION })
+const ec2 = new AWS.EC2({ region: process.env.CLOUD_REGION })
 const costExplorer = new AWS.CostExplorer({ region: 'us-east-1' })
-const ecs = new AWS.ECS({ region: process.env.AWS_REGION })
-const lambda = new AWS.Lambda({ region: process.env.AWS_REGION })
+const ecs = new AWS.ECS({ region: process.env.CLOUD_REGION })
+const lambda = new AWS.Lambda({ region: process.env.CLOUD_REGION })
 
 export default async function handler(
   req: NextApiRequest,

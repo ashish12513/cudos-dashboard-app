@@ -9,8 +9,8 @@ AWS.config.update({
 })
 
 const costExplorer = new AWS.CostExplorer({ region: 'us-east-1' })
-const ec2 = new AWS.EC2({ region: process.env.AWS_REGION })
-const cloudWatch = new AWS.CloudWatch({ region: process.env.AWS_REGION })
+const ec2 = new AWS.EC2({ region: process.env.CLOUD_REGION })
+const cloudWatch = new AWS.CloudWatch({ region: process.env.CLOUD_REGION })
 
 export default async function handler(
   req: NextApiRequest,

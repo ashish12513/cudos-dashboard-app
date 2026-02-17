@@ -5,9 +5,9 @@ import { parse } from 'cookie'
 
 // Configure AWS
 AWS.config.update({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.CLOUD_REGION,
+  accessKeyId: process.env.CLOUD_ACCESS_KEY_ID,
+  secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY,
 })
 
 const quicksight = new AWS.QuickSight()
@@ -47,7 +47,7 @@ export default async function handler(
       AwsAccountId: process.env.QUICKSIGHT_ACCOUNT_ID!,
       Namespace: 'default',
       AuthorizedResourceArns: [
-        `arn:aws:quicksight:${process.env.AWS_REGION}:${process.env.QUICKSIGHT_ACCOUNT_ID}:dashboard/${dashboardId}`
+        `arn:aws:quicksight:${process.env.CLOUD_REGION}:${process.env.CLOUD_ACCOUNT_ID}:dashboard/${dashboardId}`
       ],
       ExperienceConfiguration: {
         Dashboard: {
