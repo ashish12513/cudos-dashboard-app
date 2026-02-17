@@ -22,14 +22,18 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       })
 
+      const data = await response.json()
+
       if (response.ok) {
+        // Store user info in localStorage for the dashboard
+        localStorage.setItem('user', JSON.stringify(data.user))
         router.push('/dashboard')
       } else {
-        const data = await response.json()
         setError(data.message || 'Login failed')
       }
     } catch (err) {
-      setError('Network error. Please try again.')
+      console.error('Login error:', err)
+      setError('Network error. Please check your connection and try again.')
     } finally {
       setLoading(false)
     }
@@ -45,6 +49,13 @@ export default function Login() {
           <p className="mt-2 text-center text-sm text-gray-600">
             Sign in to your account
           </p>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-xs text-blue-700 text-center">
+              <strong>Demo Login:</strong><br />
+              Email: ashish.anand@redingtongroup.com<br />
+              Password: password
+            </p>
+          </div>
         </div>
         
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
