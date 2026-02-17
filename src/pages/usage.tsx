@@ -1,5 +1,4 @@
 import Layout from '../components/Layout'
-import QuickSightEmbed from '../components/QuickSightEmbed'
 import { useEffect, useState } from 'react'
 
 interface UsageMetrics {
@@ -177,16 +176,11 @@ export default function Usage() {
           </div>
         )}
 
-        <QuickSightEmbed 
-          dashboardId="cudos-v5"
-          title="Resource Usage Analytics"
-          height="800px"
-          parameters={{
-            view: 'usage',
-            groupBy: 'service',
-            metric: 'utilization'
-          }}
-        />
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 text-sm">
+            All data is fetched directly from AWS APIs for real-time accuracy
+          </p>
+        </div>
       </div>
     </Layout>
   )

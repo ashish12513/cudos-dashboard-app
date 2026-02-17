@@ -1,5 +1,4 @@
 import Layout from '../components/Layout'
-import QuickSightEmbed from '../components/QuickSightEmbed'
 import { useEffect, useState } from 'react'
 
 interface ComputeMetrics {
@@ -195,16 +194,11 @@ export default function Compute() {
           )}
         </div>
 
-        <QuickSightEmbed 
-          dashboardId="cudos-v5"
-          title="Compute Resources Analysis"
-          height="800px"
-          parameters={{
-            view: 'compute',
-            groupBy: 'instanceType',
-            metric: 'cost'
-          }}
-        />
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 text-sm">
+            All data is fetched directly from AWS APIs for real-time accuracy
+          </p>
+        </div>
       </div>
     </Layout>
   )

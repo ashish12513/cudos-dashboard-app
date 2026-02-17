@@ -1,5 +1,4 @@
 import Layout from '../components/Layout'
-import QuickSightEmbed from '../components/QuickSightEmbed'
 import { useEffect, useState } from 'react'
 
 interface TrendsMetrics {
@@ -206,16 +205,11 @@ export default function Trends() {
           </div>
         )}
 
-        <QuickSightEmbed 
-          dashboardId="cudos-v5"
-          title="Cost Trends & Forecasting"
-          height="800px"
-          parameters={{
-            view: 'trends',
-            timeRange: '12months',
-            showForecast: 'true'
-          }}
-        />
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 text-sm">
+            All data is fetched directly from AWS APIs for real-time accuracy
+          </p>
+        </div>
       </div>
     </Layout>
   )
