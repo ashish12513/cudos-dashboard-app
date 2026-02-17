@@ -45,6 +45,7 @@ export default function Dashboard() {
     const fetchAllData = async (accountId?: string) => {
       try {
         const accountParam = accountId ? `?accountId=${accountId}` : ''
+        
         const [costRes, usageRes, computeRes, trendsRes, securityRes] = await Promise.all([
           fetch(`/api/cost-metrics${accountParam}`),
           fetch(`/api/usage-metrics${accountParam}`),
@@ -70,7 +71,7 @@ export default function Dashboard() {
         })
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error)
-        // Set fallback data
+        // Set fallback data only if API calls fail
         setData({
           cost: {
             totalSpent: 12450,

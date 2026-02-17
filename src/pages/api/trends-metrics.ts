@@ -28,7 +28,7 @@ export default async function handler(
     const formatDate = (date: Date) => date.toISOString().split('T')[0]
 
     // Get 12 months of cost data
-    const historicalParams = {
+    const historicalParams: any = {
       TimePeriod: {
         Start: formatDate(twelveMonthsAgo),
         End: formatDate(today)
@@ -38,7 +38,7 @@ export default async function handler(
     }
 
     // Get cost forecast
-    const forecastParams = {
+    const forecastParams: any = {
       TimePeriod: {
         Start: formatDate(today),
         End: formatDate(new Date(today.getFullYear(), today.getMonth() + 3, 1)) // 3 months ahead

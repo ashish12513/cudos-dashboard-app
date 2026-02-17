@@ -4,9 +4,13 @@ frontend:
     preBuild:
       commands:
         - npm ci
+        - echo "Node version:" && node --version
+        - echo "NPM version:" && npm --version
     build:
       commands:
+        - echo "Starting build process..."
         - npm run build
+        - echo "Build completed successfully"
   artifacts:
     baseDirectory: .next
     files:
@@ -15,3 +19,8 @@ frontend:
     paths:
       - node_modules/**/*
       - .next/cache/**/*
+  customHeaders:
+    - pattern: '/api/*'
+      headers:
+        - key: 'Cache-Control'
+          value: 'no-cache'

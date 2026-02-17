@@ -36,7 +36,7 @@ export default async function handler(
     }, 0) || 0
 
     // Get storage usage from Cost Explorer
-    const storageParams = {
+    const storageParams: any = {
       TimePeriod: {
         Start: formatDate(currentMonth),
         End: formatDate(today)
@@ -58,7 +58,7 @@ export default async function handler(
     }
 
     // Get data transfer usage
-    const dataTransferParams = {
+    const dataTransferParams: any = {
       TimePeriod: {
         Start: formatDate(currentMonth),
         End: formatDate(today)

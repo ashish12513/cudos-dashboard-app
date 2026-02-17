@@ -21,20 +21,24 @@ export default async function handler(
   try {
     const { accountId } = req.query
     
-    // Date range for current month
+    // Date range for current month (February 2026)
     const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    const currentYear = now.getFullYear()
+    const currentMonth = now.getMonth()
     
-    // Previous month for comparison
-    const startOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-    const endOfPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0)
+    // Current month: Feb 1, 2026 to Feb 17, 2026 (today)
+    const startOfMonth = new Date(currentYear, currentMonth, 1)
+    const today = new Date(currentYear, currentMonth, now.getDate())
+    
+    // Previous month: Jan 1, 2026 to Jan 31, 2026
+    const startOfPrevMonth = new Date(currentYear, currentMonth - 1, 1)
+    const endOfPrevMonth = new Date(currentYear, currentMonth, 0)
 
-    // Base parameters
-    const baseParams = {
+    // Base parameters for current month (up to today)
+    const baseParams: any = {
       TimePeriod: {
         Start: startOfMonth.toISOString().split('T')[0],
-        End: endOfMonth.toISOString().split('T')[0]
+        End: today.toISOString().split('T')[0]
       },
       Granularity: 'MONTHLY',
       Metrics: ['BlendedCost', 'UnblendedCost', 'UsageQuantity']
@@ -110,7 +114,7 @@ export default async function handler(
         accountId: accountId || 'all',
         period: {
           start: startOfMonth.toISOString().split('T')[0],
-          end: endOfMonth.toISOString().split('T')[0]
+          end: today.toISOString().split('T')[0]
         }
       }
     })

@@ -54,7 +54,7 @@ export default async function handler(
     const totalECSClusters = ecsClusters.clusterArns?.length || 0
 
     // Get compute costs from Cost Explorer
-    const computeCostParams = {
+    const computeCostParams: any = {
       TimePeriod: {
         Start: formatDate(currentMonth),
         End: formatDate(today)
