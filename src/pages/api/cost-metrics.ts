@@ -94,7 +94,7 @@ export default async function handler(
     const topServices = serviceCostResult.ResultsByTime?.[0]?.Groups
       ?.map(group => ({
         service: group.Keys?.[0] || 'Unknown',
-        cost: parseFloat(group.Metrics?.BlendedCost?.Amount || '0')
+        cost: Math.round(parseFloat(group.Metrics?.BlendedCost?.Amount || '0') * 100) / 100
       }))
       .filter(service => service.cost > 0)
       .sort((a, b) => b.cost - a.cost)
@@ -107,9 +107,9 @@ export default async function handler(
     res.status(200).json({
       success: true,
       data: {
-        totalSpent: currentCost,
-        monthlyGrowth: monthlyGrowth,
-        budgetUsed: Math.min(budgetUsed, 100),
+        totalSpent: Math.round(currentCost * 100) / 100, // Round to 2 decimal places
+        monthlyGrowth: Math.round(monthlyGrowth * 100) / 100, // Round to 2 decimal places
+        budgetUsed: Math.round(Math.min(budgetUsed, 100) * 100) / 100, // Round to 2 decimal places
         topServices: topServices,
         accountId: accountId || 'all',
         period: {
@@ -127,15 +127,15 @@ export default async function handler(
       success: false,
       error: error.message,
       data: {
-        totalSpent: 12450,
-        monthlyGrowth: 8.5,
-        budgetUsed: 73,
+        totalSpent: 12450.00,
+        monthlyGrowth: 8.50,
+        budgetUsed: 73.00,
         topServices: [
-          { service: 'Amazon Elastic Compute Cloud - Compute', cost: 4200 },
-          { service: 'Amazon Simple Storage Service', cost: 1800 },
-          { service: 'Amazon Relational Database Service', cost: 2100 },
-          { service: 'Amazon CloudFront', cost: 890 },
-          { service: 'Amazon Virtual Private Cloud', cost: 650 }
+          { service: 'Amazon Elastic Compute Cloud - Compute', cost: 4200.00 },
+          { service: 'Amazon Simple Storage Service', cost: 1800.00 },
+          { service: 'Amazon Relational Database Service', cost: 2100.00 },
+          { service: 'Amazon CloudFront', cost: 890.00 },
+          { service: 'Amazon Virtual Private Cloud', cost: 650.00 }
         ],
         accountId: req.query.accountId || 'all'
       }
