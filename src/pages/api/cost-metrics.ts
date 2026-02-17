@@ -8,7 +8,7 @@ AWS.config.update({
   secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY,
 })
 
-const costExplorer = new AWS.CostExplorer({ region: 'us-east-1' }) // Cost Explorer is only available in us-east-1
+const costExplorer = new AWS.CostExplorer({ region: 'us-east-1' })
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,54 +19,53 @@ export default async function handler(
   }
 
   try {
-    const today = new Date()
-    const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
-    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0)
-    const lastYear = new Date(today.getFullYear() - 1, today.getMonth(), 1)
-    const lastYearEnd = new Date(today.getFullYear() - 1, today.getMonth() + 1, 0)
+    const { accountId } = req.query
+    
+    // Date range for current month
+    const now = new Date()
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    
+    // Previous month for comparison
+    const startOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const endOfPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
-    // Format dates for AWS API
-    const formatDate = (date: Date) => date.toISOString().split('T')[0]
+    // Base parameters
+    const baseParams = {
+      TimePeriod: {
+        Start: startOfMonth.toISOString().split('T')[0],
+        End: endOfMonth.toISOString().split('T')[0]
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['BlendedCost', 'UnblendedCost', 'UsageQuantity']
+    }
+
+    // Add account filter if specific account is requested
+    if (accountId && accountId !== 'all') {
+      baseParams.Filter = {
+        Dimensions: {
+          Key: 'LINKED_ACCOUNT',
+          Values: [accountId as string]
+        }
+      }
+    }
 
     // Get current month cost
-    const currentMonthParams = {
+    const currentCostResult = await costExplorer.getCostAndUsage(baseParams).promise()
+    
+    // Get previous month cost for growth calculation
+    const prevMonthParams = {
+      ...baseParams,
       TimePeriod: {
-        Start: formatDate(currentMonth),
-        End: formatDate(today)
-      },
-      Granularity: 'MONTHLY',
-      Metrics: ['BlendedCost']
+        Start: startOfPrevMonth.toISOString().split('T')[0],
+        End: endOfPrevMonth.toISOString().split('T')[0]
+      }
     }
+    const prevCostResult = await costExplorer.getCostAndUsage(prevMonthParams).promise()
 
-    // Get last month cost for comparison
-    const lastMonthParams = {
-      TimePeriod: {
-        Start: formatDate(lastMonth),
-        End: formatDate(lastMonthEnd)
-      },
-      Granularity: 'MONTHLY',
-      Metrics: ['BlendedCost']
-    }
-
-    // Get same month last year for YoY comparison
-    const lastYearParams = {
-      TimePeriod: {
-        Start: formatDate(lastYear),
-        End: formatDate(lastYearEnd)
-      },
-      Granularity: 'MONTHLY',
-      Metrics: ['BlendedCost']
-    }
-
-    // Get cost by service for top services
+    // Get cost by service
     const serviceParams = {
-      TimePeriod: {
-        Start: formatDate(currentMonth),
-        End: formatDate(today)
-      },
-      Granularity: 'MONTHLY',
-      Metrics: ['BlendedCost'],
+      ...baseParams,
       GroupBy: [
         {
           Type: 'DIMENSION',
@@ -74,77 +73,68 @@ export default async function handler(
         }
       ]
     }
+    const serviceCostResult = await costExplorer.getCostAndUsage(serviceParams).promise()
 
-    // Execute all API calls
-    const [currentMonthCost, lastMonthCost, lastYearCost, serviceCosts] = await Promise.all([
-      costExplorer.getCostAndUsage(currentMonthParams).promise(),
-      costExplorer.getCostAndUsage(lastMonthParams).promise(),
-      costExplorer.getCostAndUsage(lastYearParams).promise(),
-      costExplorer.getCostAndUsage(serviceParams).promise()
-    ])
+    // Calculate metrics
+    const currentCost = parseFloat(
+      currentCostResult.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0'
+    )
+    
+    const prevCost = parseFloat(
+      prevCostResult.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0'
+    )
 
-    // Extract cost values
-    const currentCost = parseFloat(currentMonthCost.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0')
-    const lastCost = parseFloat(lastMonthCost.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0')
-    const yearAgoCost = parseFloat(lastYearCost.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0')
+    const monthlyGrowth = prevCost > 0 ? ((currentCost - prevCost) / prevCost) * 100 : 0
 
-    // Calculate growth rates
-    const monthlyGrowth = lastCost > 0 ? ((currentCost - lastCost) / lastCost) * 100 : 0
-    const yearlyGrowth = yearAgoCost > 0 ? ((currentCost - yearAgoCost) / yearAgoCost) * 100 : 0
-
-    // Get top services
-    const topServices = serviceCosts.ResultsByTime?.[0]?.Groups
+    // Top services by cost
+    const topServices = serviceCostResult.ResultsByTime?.[0]?.Groups
       ?.map(group => ({
         service: group.Keys?.[0] || 'Unknown',
         cost: parseFloat(group.Metrics?.BlendedCost?.Amount || '0')
       }))
+      .filter(service => service.cost > 0)
       .sort((a, b) => b.cost - a.cost)
-      .slice(0, 5) || []
+      .slice(0, 10) || []
 
-    // Mock budget data (you can replace this with actual budget API calls)
-    const mockBudget = currentCost * 1.2 // Assume budget is 20% higher than current spend
-    const budgetUsed = mockBudget > 0 ? (currentCost / mockBudget) * 100 : 0
+    // Budget calculation (you can customize this based on your budget setup)
+    const monthlyBudget = 15000 // You can fetch this from AWS Budgets API
+    const budgetUsed = (currentCost / monthlyBudget) * 100
 
     res.status(200).json({
       success: true,
       data: {
-        currentMonthCost: currentCost,
-        lastMonthCost: lastCost,
+        totalSpent: currentCost,
         monthlyGrowth: monthlyGrowth,
-        yearlyGrowth: yearlyGrowth,
-        budgetUsed: budgetUsed,
-        budget: mockBudget,
+        budgetUsed: Math.min(budgetUsed, 100),
         topServices: topServices,
-        currency: 'USD'
-      },
-      timestamp: new Date().toISOString()
+        accountId: accountId || 'all',
+        period: {
+          start: startOfMonth.toISOString().split('T')[0],
+          end: endOfMonth.toISOString().split('T')[0]
+        }
+      }
     })
 
   } catch (error: any) {
-    console.error('Cost metrics error:', error)
+    console.error('Cost Explorer API error:', error)
     
-    // Return mock data if API fails
+    // Fallback data
     res.status(200).json({
       success: false,
       error: error.message,
       data: {
-        currentMonthCost: 3240,
-        lastMonthCost: 2890,
-        monthlyGrowth: 12.1,
-        yearlyGrowth: 24.5,
-        budgetUsed: 68.2,
-        budget: 4750,
+        totalSpent: 12450,
+        monthlyGrowth: 8.5,
+        budgetUsed: 73,
         topServices: [
-          { service: 'Amazon Elastic Compute Cloud - Compute', cost: 1200 },
-          { service: 'Amazon Simple Storage Service', cost: 450 },
-          { service: 'Amazon Relational Database Service', cost: 800 },
-          { service: 'Amazon CloudFront', cost: 320 },
-          { service: 'Amazon Virtual Private Cloud', cost: 180 }
+          { service: 'Amazon Elastic Compute Cloud - Compute', cost: 4200 },
+          { service: 'Amazon Simple Storage Service', cost: 1800 },
+          { service: 'Amazon Relational Database Service', cost: 2100 },
+          { service: 'Amazon CloudFront', cost: 890 },
+          { service: 'Amazon Virtual Private Cloud', cost: 650 }
         ],
-        currency: 'USD'
-      },
-      timestamp: new Date().toISOString(),
-      note: 'Using mock data due to API error'
+        accountId: req.query.accountId || 'all'
+      }
     })
   }
 }

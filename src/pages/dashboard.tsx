@@ -42,14 +42,15 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    const fetchAllData = async (accountId?: string) => {
       try {
+        const accountParam = accountId ? `?accountId=${accountId}` : ''
         const [costRes, usageRes, computeRes, trendsRes, securityRes] = await Promise.all([
-          fetch('/api/cost-metrics'),
-          fetch('/api/usage-metrics'),
-          fetch('/api/compute-metrics'),
-          fetch('/api/trends-metrics'),
-          fetch('/api/security-metrics')
+          fetch(`/api/cost-metrics${accountParam}`),
+          fetch(`/api/usage-metrics${accountParam}`),
+          fetch(`/api/compute-metrics${accountParam}`),
+          fetch(`/api/trends-metrics${accountParam}`),
+          fetch(`/api/security-metrics${accountParam}`)
         ])
 
         const [cost, usage, compute, trends, security] = await Promise.all([
@@ -114,7 +115,22 @@ export default function Dashboard() {
       }
     }
 
-    fetchAllData()
+    // Initial load
+    const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
+    fetchAllData(savedAccount || undefined)
+
+    // Listen for account changes
+    const handleAccountChange = (event: CustomEvent) => {
+      setLoading(true)
+      fetchAllData(event.detail === 'all' ? undefined : event.detail)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('accountChanged', handleAccountChange as EventListener)
+      return () => {
+        window.removeEventListener('accountChanged', handleAccountChange as EventListener)
+      }
+    }
   }, [])
 
   const formatCurrency = (amount: number) => {
