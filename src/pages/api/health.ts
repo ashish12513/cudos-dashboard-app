@@ -17,8 +17,8 @@ export default function handler(
     version: process.env.npm_package_version || '1.0.0',
     services: {
       quicksight: {
-        configured: !!(process.env.QUICKSIGHT_ACCOUNT_ID && process.env.QUICKSIGHT_DASHBOARD_ID),
-        region: process.env.AWS_REGION || 'not-configured'
+        configured: !!(process.env.CLOUD_ACCOUNT_ID && process.env.QUICKSIGHT_DASHBOARD_ID),
+        region: process.env.CLOUD_REGION || 'not-configured'
       }
     }
   }

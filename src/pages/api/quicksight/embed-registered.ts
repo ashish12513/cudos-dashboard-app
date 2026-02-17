@@ -5,9 +5,9 @@ import { parse } from 'cookie'
 
 // Configure AWS
 AWS.config.update({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.CLOUD_REGION,
+  accessKeyId: process.env.CLOUD_ACCESS_KEY_ID,
+  secretAccessKey: process.env.CLOUD_SECRET_ACCESS_KEY,
 })
 
 const quicksight = new AWS.QuickSight()
@@ -47,10 +47,10 @@ export default async function handler(
   try {
     // Use registered user embedding (works with Standard edition)
     const params = {
-      AwsAccountId: process.env.QUICKSIGHT_ACCOUNT_ID!,
+      AwsAccountId: process.env.CLOUD_ACCOUNT_ID!,
       DashboardId: dashboardId,
       IdentityType: 'QUICKSIGHT',
-      UserArn: `arn:aws:quicksight:${process.env.AWS_REGION}:${process.env.QUICKSIGHT_ACCOUNT_ID}:user/default/${user.email}`,
+      UserArn: `arn:aws:quicksight:${process.env.CLOUD_REGION}:${process.env.CLOUD_ACCOUNT_ID}:user/default/${user.email}`,
       SessionLifetimeInMinutes: 600,
       UndoRedoDisabled: true,
       ResetDisabled: true,
@@ -76,10 +76,10 @@ export default async function handler(
         await createQuickSightUser(user.email)
         // Retry embed URL generation
         const retryParams = {
-          AwsAccountId: process.env.QUICKSIGHT_ACCOUNT_ID!,
+          AwsAccountId: process.env.CLOUD_ACCOUNT_ID!,
           DashboardId: dashboardId,
           IdentityType: 'QUICKSIGHT',
-          UserArn: `arn:aws:quicksight:${process.env.AWS_REGION}:${process.env.QUICKSIGHT_ACCOUNT_ID}:user/default/${user.email}`,
+          UserArn: `arn:aws:quicksight:${process.env.CLOUD_REGION}:${process.env.CLOUD_ACCOUNT_ID}:user/default/${user.email}`,
           SessionLifetimeInMinutes: 600,
           UndoRedoDisabled: true,
           ResetDisabled: true,
@@ -110,7 +110,7 @@ export default async function handler(
 
 async function createQuickSightUser(email: string) {
   const params = {
-    AwsAccountId: process.env.QUICKSIGHT_ACCOUNT_ID!,
+    AwsAccountId: process.env.CLOUD_ACCOUNT_ID!,
     Namespace: 'default',
     IdentityType: 'QUICKSIGHT',
     Email: email,
