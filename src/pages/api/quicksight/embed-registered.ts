@@ -112,11 +112,26 @@ async function createQuickSightUser(email: string) {
   const params = {
     AwsAccountId: process.env.CLOUD_ACCOUNT_ID!,
     Namespace: 'default',
-    IdentityType: 'QUICKSIGHT',
+    IdentityType: 'QUICKSIGHT' as const,
     Email: email,
-    UserRole: 'READER',
+    UserRole: 'READER' as const,
     UserName: email,
   }
 
-  return await quicksight.registerUser(params).promise()
+  try {
+    const result = await quicksight.registerUser(params).promise()
+    console.log('QuickSight user created:', result.User?.UserName)
+    
+    // Wait a moment for user to be fully created
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    return result
+  } catch (error: any) {
+    console.error('Error creating QuickSight user:', error)
+    if (error.code === 'ResourceExistsException') {
+      // User already exists, that's fine
+      return { User: { UserName: email } }
+    }
+    throw error
+  }
 }
