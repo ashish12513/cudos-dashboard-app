@@ -1,4 +1,4 @@
-# Cloud Cost Intelligence - Deployment Guide
+# Vision 360 - Deployment Guide
 
 ## Prerequisites
 
@@ -34,9 +34,9 @@ NEXTAUTH_URL=https://your-domain.com
    ```bash
    git init
    git add .
-   git commit -m "Initial commit - Cloud Cost Intelligence"
+   git commit -m "Initial commit - Vision 360"
    git branch -M main
-   git remote add origin https://github.com/yourusername/cloud-cost-intelligence.git
+   git remote add origin https://github.com/yourusername/vision360.git
    git push -u origin main
    ```
 
@@ -88,10 +88,10 @@ NEXTAUTH_URL=https://your-domain.com
 
 1. **Build and Push to ECR**:
    ```bash
-   aws ecr create-repository --repository-name cloud-cost-intelligence
-   docker build -t cloud-cost-intelligence .
-   docker tag cloud-cost-intelligence:latest YOUR_ACCOUNT.dkr.ecr.REGION.amazonaws.com/cloud-cost-intelligence:latest
-   docker push YOUR_ACCOUNT.dkr.ecr.REGION.amazonaws.com/cloud-cost-intelligence:latest
+   aws ecr create-repository --repository-name vision360
+   docker build -t vision360 .
+   docker tag vision360:latest YOUR_ACCOUNT.dkr.ecr.REGION.amazonaws.com/vision360:latest
+   docker push YOUR_ACCOUNT.dkr.ecr.REGION.amazonaws.com/vision360:latest
    ```
 
 2. **Create ECS Service**:

@@ -102,7 +102,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-gray-700 to-gray-800">
-            <h1 className="text-xl font-bold text-white">Cloud Cost Intelligence</h1>
+            <h1 className="text-xl font-bold text-white">Vision 360</h1>
           </div>
 
           {/* Account Selector */}

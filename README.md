@@ -1,4 +1,4 @@
-# Cloud Cost Intelligence Dashboard
+# Vision 360 Dashboard
 
 A modern, enterprise-grade AWS cost management and analytics platform built with Next.js and integrated with AWS QuickSight.
 
@@ -48,8 +48,8 @@ A modern, enterprise-grade AWS cost management and analytics platform built with
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/cloud-cost-intelligence.git
-   cd cloud-cost-intelligence
+   git clone https://github.com/yourusername/vision360.git
+   cd vision360
    ```
 
 2. **Install dependencies**:
@@ -88,8 +88,8 @@ A modern, enterprise-grade AWS cost management and analytics platform built with
 ### Docker Deployment
 
 ```bash
-docker build -t cloud-cost-intelligence .
-docker run -p 3000:3000 --env-file .env.local cloud-cost-intelligence
+docker build -t vision360 .
+docker run -p 3000:3000 --env-file .env.local vision360
 ```
 
 ### ECS Fargate
