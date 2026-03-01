@@ -170,7 +170,7 @@ export default function Dashboard() {
       <Layout>
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Cost Intelligence</h1>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Financial Command Center</h1>
             <p className="text-gray-600 text-lg font-medium mt-2">Loading comprehensive AWS analytics...</p>
           </div>
           
@@ -196,9 +196,9 @@ export default function Dashboard() {
         <div>
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Cost Intelligence</h1>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Financial Command Center</h1>
               <p className="text-gray-600 text-lg font-medium mt-2">
-                Comprehensive AWS cost management, resource monitoring, and analytics dashboard (v1.1)
+                Turning AWS spend into strategic advantage.
               </p>
             </div>
             <button
