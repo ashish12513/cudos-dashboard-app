@@ -41,6 +41,7 @@ export default async function handler(
   }
 
   // Generate JWT
+  const jwtSecret = process.env.JWT_SECRET || 'vision360-default-secret-key-change-in-production'
   const token = jwt.sign(
     { 
       userId: user.id, 
@@ -48,7 +49,7 @@ export default async function handler(
       name: user.name,
       department: user.department
     },
-    process.env.JWT_SECRET!,
+    jwtSecret,
     { expiresIn: '24h' }
   )
 
