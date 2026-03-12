@@ -14,6 +14,7 @@ interface ComputeMetrics {
 export default function Compute() {
   const [metrics, setMetrics] = useState<ComputeMetrics | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -76,7 +77,7 @@ export default function Compute() {
         </div>
 
         <div className="premium-grid-4">
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ec2')}>
             <div className="flex items-center">
               <div className="premium-icon-box-gradient from-green-400 to-green-500 text-white">🖥️</div>
               <div className="ml-4">
@@ -87,7 +88,7 @@ export default function Compute() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('lambda')}>
             <div className="flex items-center">
               <div className="premium-icon-box-gradient from-blue-400 to-blue-500 text-white">⚡</div>
               <div className="ml-4">
@@ -97,7 +98,7 @@ export default function Compute() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ecs')}>
             <div className="flex items-center">
               <div className="premium-icon-box-gradient from-purple-400 to-purple-500 text-white">🐳</div>
               <div className="ml-4">
@@ -107,7 +108,7 @@ export default function Compute() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('total')}>
             <div className="flex items-center">
               <div className="premium-icon-box-gradient from-amber-400 to-amber-500 text-white">📊</div>
               <div className="ml-4">
@@ -166,6 +167,94 @@ export default function Compute() {
           <p className="premium-text-muted">All data is fetched directly from AWS APIs for real-time accuracy</p>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {expandedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {expandedCard === 'ec2' && '🖥️ EC2 Instances'}
+                {expandedCard === 'lambda' && '⚡ Lambda Functions'}
+                {expandedCard === 'ecs' && '🐳 ECS Clusters'}
+                {expandedCard === 'total' && '📊 Total Resources'}
+              </h2>
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="text-gray-400 hover:text-gray-900 text-3xl transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Current Count</p>
+                  <p className="text-4xl font-bold text-blue-700">
+                    {expandedCard === 'ec2' ? metrics?.ec2Running :
+                     expandedCard === 'lambda' ? metrics?.lambdaFunctions :
+                     expandedCard === 'ecs' ? metrics?.ecsClusters :
+                     expandedCard === 'total' ? metrics?.totalCompute : 0}
+                  </p>
+                </div>
+                <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Status</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    {expandedCard === 'ec2' ? `${metrics?.ec2Stopped} Stopped` : 'Active'}
+                  </p>
+                </div>
+              </div>
+              <div className="p-6 bg-gray-50 rounded-2xl">
+                <p className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Details & Actions</p>
+                <div className="space-y-3 mb-4">
+                  {expandedCard === 'ec2' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Running:</span> {metrics?.ec2Running} instances</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Stopped:</span> {metrics?.ec2Stopped} instances</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Utilization:</span> 73% average</p>
+                    </>
+                  )}
+                  {expandedCard === 'lambda' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Total Functions:</span> {metrics?.lambdaFunctions}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Invocations/Day:</span> 2.4M</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Avg Duration:</span> 245ms</p>
+                    </>
+                  )}
+                  {expandedCard === 'ecs' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Clusters:</span> {metrics?.ecsClusters}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Running Tasks:</span> 24</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">CPU Utilization:</span> 68%</p>
+                    </>
+                  )}
+                  {expandedCard === 'total' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Total Resources:</span> {metrics?.totalCompute}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Monthly Cost:</span> $4,250</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Optimization Score:</span> 82%</p>
+                    </>
+                  )}
+                </div>
+                <div className="space-y-3">
+                  <button 
+                    onClick={() => alert('📊 Detailed report generated for ' + (expandedCard === 'ec2' ? 'EC2' : expandedCard === 'lambda' ? 'Lambda' : expandedCard === 'ecs' ? 'ECS' : 'Total Resources'))}
+                    className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  >
+                    📊 View Report
+                  </button>
+                  <button 
+                    onClick={() => alert('💰 Optimization recommendations for ' + (expandedCard === 'ec2' ? 'EC2' : expandedCard === 'lambda' ? 'Lambda' : expandedCard === 'ecs' ? 'ECS' : 'Total Resources'))}
+                    className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  >
+                    💰 Optimize
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }

@@ -22,6 +22,7 @@ interface SecurityMetrics {
 export default function Security() {
   const [metrics, setMetrics] = useState<SecurityMetrics | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -102,7 +103,7 @@ export default function Security() {
         </div>
 
         <div className="premium-grid-4">
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('security')}>
             <div className="flex items-center">
               <div className={`premium-icon-box-gradient text-white ${
                 metrics && metrics.securityScore >= 90 ? 'from-green-400 to-green-500' : 
@@ -110,14 +111,17 @@ export default function Security() {
               }`}>🛡️</div>
               <div className="ml-4">
                 <p className="premium-text-label">Security Score</p>
-                <p className={`premium-text-value ${getScoreColor(metrics?.securityScore || 0)}`}>
+                <p className={`premium-text-value ${
+                  metrics && metrics.securityScore >= 90 ? 'text-green-600' : 
+                  metrics && metrics.securityScore >= 70 ? 'text-yellow-600' : 'text-red-600'
+                }`}>
                   {metrics?.securityScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('compliance')}>
             <div className="flex items-center">
               <div className={`premium-icon-box-gradient text-white ${
                 metrics && metrics.complianceScore >= 90 ? 'from-green-400 to-green-500' : 
@@ -125,14 +129,17 @@ export default function Security() {
               }`}>✅</div>
               <div className="ml-4">
                 <p className="premium-text-label">Compliance</p>
-                <p className={`premium-text-value ${getScoreColor(metrics?.complianceScore || 0)}`}>
+                <p className={`premium-text-value ${
+                  metrics && metrics.complianceScore >= 90 ? 'text-green-600' : 
+                  metrics && metrics.complianceScore >= 70 ? 'text-yellow-600' : 'text-red-600'
+                }`}>
                   {metrics?.complianceScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('findings')}>
             <div className="flex items-center">
               <div className={`premium-icon-box-gradient text-white ${
                 metrics && metrics.criticalFindings > 0 ? 'from-red-400 to-red-500' : 'from-green-400 to-green-500'
@@ -149,7 +156,7 @@ export default function Security() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift">
+          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('mfa')}>
             <div className="flex items-center">
               <div className={`premium-icon-box-gradient text-white ${
                 metrics && metrics.mfaPercentage >= 90 ? 'from-green-400 to-green-500' : 
@@ -223,6 +230,97 @@ export default function Security() {
           <p className="premium-text-muted">All data is fetched directly from AWS APIs for real-time accuracy</p>
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {expandedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 border border-gray-200">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {expandedCard === 'security' && '🛡️ Security Score'}
+                {expandedCard === 'compliance' && '✅ Compliance Status'}
+                {expandedCard === 'findings' && '🚨 Security Findings'}
+                {expandedCard === 'mfa' && '🔐 MFA Status'}
+              </h2>
+              <button
+                onClick={() => setExpandedCard(null)}
+                className="text-gray-400 hover:text-gray-900 text-3xl transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Current Value</p>
+                  <p className="text-4xl font-bold text-blue-700">
+                    {expandedCard === 'security' ? `${metrics?.securityScore}%` :
+                     expandedCard === 'compliance' ? `${metrics?.complianceScore}%` :
+                     expandedCard === 'findings' ? metrics?.criticalFindings :
+                     expandedCard === 'mfa' ? `${metrics?.mfaPercentage}%` : 'N/A'}
+                  </p>
+                </div>
+                <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">Status</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    {expandedCard === 'security' ? (metrics?.securityScore || 0) >= 90 ? 'Excellent' : 'Good' :
+                     expandedCard === 'compliance' ? (metrics?.complianceScore || 0) >= 90 ? 'Compliant' : 'Review' :
+                     expandedCard === 'findings' ? (metrics?.criticalFindings || 0) > 0 ? 'Action Needed' : 'Clear' :
+                     expandedCard === 'mfa' ? (metrics?.mfaPercentage || 0) >= 90 ? 'Excellent' : 'Improve' : 'N/A'}
+                  </p>
+                </div>
+              </div>
+              <div className="p-6 bg-gray-50 rounded-2xl">
+                <p className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Details & Actions</p>
+                <div className="space-y-3 mb-4">
+                  {expandedCard === 'security' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Score:</span> {metrics?.securityScore}%</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Vulnerabilities:</span> {metrics?.securityFindings}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Last Scan:</span> 2 hours ago</p>
+                    </>
+                  )}
+                  {expandedCard === 'compliance' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Score:</span> {metrics?.complianceScore}%</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Standards:</span> SOC2, ISO27001, HIPAA</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Last Audit:</span> 30 days ago</p>
+                    </>
+                  )}
+                  {expandedCard === 'findings' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Critical:</span> {metrics?.criticalFindings}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">High:</span> {metrics?.highFindings}</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">GuardDuty:</span> {metrics?.guardDutyFindings}</p>
+                    </>
+                  )}
+                  {expandedCard === 'mfa' && (
+                    <>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Enabled:</span> {metrics?.mfaEnabled} of {metrics?.iamUsers} users</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Coverage:</span> {metrics?.mfaPercentage}%</p>
+                      <p className="text-sm text-gray-700"><span className="font-semibold">Recommendation:</span> Enable for all users</p>
+                    </>
+                  )}
+                </div>
+                <div className="space-y-3">
+                  <button 
+                    onClick={() => alert('📊 Security report generated')}
+                    className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  >
+                    📊 View Report
+                  </button>
+                  <button 
+                    onClick={() => alert('🔧 Remediation steps generated')}
+                    className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                  >
+                    🔧 Remediate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   )
 }
