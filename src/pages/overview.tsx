@@ -318,57 +318,14 @@ export default function Dashboard() {
 
   const DetailViewModal = ({ service, onClose }: { service: string | null; onClose: () => void }) => {
     if (!service) return null
+    const [detailView, setDetailView] = useState<'main' | 'metrics' | 'optimization'>('main')
 
     const handleViewMetrics = () => {
-      const metricsData = `
-Service: ${service}
-Current Usage: High
-Cost Trend: ↓ 5%
-Optimization: Medium
-Recommendation: Review sizing
-
-Detailed Metrics Report:
-- CPU Utilization: 78%
-- Memory Usage: 65%
-- Network I/O: 450 Mbps
-- Disk I/O: 320 IOPS
-- Cost per hour: $2.45
-- Monthly projection: $1,764
-
-Generated: ${new Date().toLocaleString()}
-      `.trim()
-      
-      alert('📊 Detailed Metrics Report\n\n' + metricsData)
+      setDetailView('metrics')
     }
 
     const handleApplyOptimization = () => {
-      const optimizationSteps = `
-Optimization Recommendations for ${service}:
-
-1. Right-size instances
-   - Current: t3.large
-   - Recommended: t3.medium
-   - Estimated savings: $340/month
-
-2. Enable auto-scaling
-   - Min instances: 2
-   - Max instances: 8
-   - Estimated savings: $180/month
-
-3. Use Reserved Instances
-   - 1-year commitment
-   - Estimated savings: $520/month
-
-4. Implement caching
-   - Reduce database calls by 40%
-   - Estimated savings: $95/month
-
-Total Potential Savings: $1,135/month
-
-Status: Ready to apply
-      `.trim()
-      
-      alert('💰 Optimization Recommendations\n\n' + optimizationSteps)
+      setDetailView('optimization')
     }
 
     const handleExportReport = () => {
@@ -386,14 +343,17 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
       a.download = `${service}-optimization-report-${new Date().toISOString().split('T')[0]}.csv`
       a.click()
       window.URL.revokeObjectURL(url)
-      alert('✅ Report exported successfully!\n\nFile: ' + a.download)
     }
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
           <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 border-b border-gray-200">
-            <h2 className="text-4xl font-bold text-gray-900">Details: {service}</h2>
+            <h2 className="text-4xl font-bold text-gray-900">
+              {detailView === 'main' && `Details: ${service}`}
+              {detailView === 'metrics' && `📊 Detailed Metrics: ${service}`}
+              {detailView === 'optimization' && `💰 Optimization Recommendations: ${service}`}
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-900 text-5xl transition-colors w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-lg flex-shrink-0"
@@ -401,55 +361,151 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               ✕
             </button>
           </div>
+          
           <div className="space-y-6 max-h-96 overflow-y-auto pr-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
-                <p className="text-sm font-semibold text-gray-600 mb-2">Current Usage</p>
-                <p className="text-4xl font-bold text-blue-600">High</p>
+            {detailView === 'main' && (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Current Usage</p>
+                    <p className="text-4xl font-bold text-blue-600">High</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Cost Trend</p>
+                    <p className="text-4xl font-bold text-green-600">↓ 5%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border border-yellow-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Optimization</p>
+                    <p className="text-4xl font-bold text-yellow-600">Medium</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Recommendation</p>
+                    <p className="text-lg font-bold text-purple-600">Review sizing</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-semibold text-gray-700 mb-4">Actions:</p>
+                  <div className="space-y-3">
+                    <button 
+                      onClick={handleViewMetrics}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      📊 View Detailed Metrics
+                    </button>
+                    <button 
+                      onClick={handleApplyOptimization}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      ✅ Apply Optimization
+                    </button>
+                    <button 
+                      onClick={handleExportReport}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      📥 Export Report
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {detailView === 'metrics' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">CPU Utilization</p>
+                    <p className="text-4xl font-bold text-white">78%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Memory Usage</p>
+                    <p className="text-4xl font-bold text-white">65%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Network I/O</p>
+                    <p className="text-3xl font-bold text-white">450 Mbps</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Disk I/O</p>
+                    <p className="text-3xl font-bold text-white">320 IOPS</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-semibold text-gray-800 mb-4">Cost Analysis</p>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Cost per hour</span>
+                      <span className="text-2xl font-bold text-[#1B7D3F]">$2.45</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Monthly projection</span>
+                      <span className="text-2xl font-bold text-[#1B7D3F]">$1,764</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Generated</span>
+                      <span className="text-sm font-medium text-gray-600">{new Date().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200">
-                <p className="text-sm font-semibold text-gray-600 mb-2">Cost Trend</p>
-                <p className="text-4xl font-bold text-green-600">↓ 5%</p>
+            )}
+            
+            {detailView === 'optimization' && (
+              <div className="space-y-4">
+                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                  <p className="text-lg font-bold text-white mb-2">Total Potential Savings</p>
+                  <p className="text-5xl font-bold text-white">$1,135/month</p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">1. Right-size instances</p>
+                    <p className="text-sm text-gray-700 mb-2">Current: t3.large → Recommended: t3.medium</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $340/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">2. Enable auto-scaling</p>
+                    <p className="text-sm text-gray-700 mb-2">Min: 2 instances, Max: 8 instances</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $180/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">3. Use Reserved Instances</p>
+                    <p className="text-sm text-gray-700 mb-2">1-year commitment for better rates</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $520/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">4. Implement caching</p>
+                    <p className="text-sm text-gray-700 mb-2">Reduce database calls by 40%</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $95/month</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Status</p>
+                  <p className="text-lg font-bold text-green-700">✅ Ready to apply</p>
+                </div>
               </div>
-              <div className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border border-yellow-200">
-                <p className="text-sm font-semibold text-gray-600 mb-2">Optimization</p>
-                <p className="text-4xl font-bold text-yellow-600">Medium</p>
-              </div>
-              <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
-                <p className="text-sm font-semibold text-gray-600 mb-2">Recommendation</p>
-                <p className="text-lg font-bold text-purple-600">Review sizing</p>
-              </div>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-              <p className="text-lg font-semibold text-gray-700 mb-4">Actions:</p>
-              <div className="space-y-3">
-                <button 
-                  onClick={handleViewMetrics}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
-                >
-                  📊 View Detailed Metrics
-                </button>
-                <button 
-                  onClick={handleApplyOptimization}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
-                >
-                  ✅ Apply Optimization
-                </button>
-                <button 
-                  onClick={handleExportReport}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
-                >
-                  📥 Export Report
-                </button>
-              </div>
-            </div>
+            )}
           </div>
-          <button
-            onClick={onClose}
-            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
-          >
-            Close
-          </button>
+          
+          <div className="flex gap-3 mt-8 pt-6 border-t border-gray-200">
+            {detailView !== 'main' && (
+              <button
+                onClick={() => setDetailView('main')}
+                className="flex-1 px-6 py-4 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+              >
+                ← Back
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
     )
