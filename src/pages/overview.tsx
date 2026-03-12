@@ -319,6 +319,76 @@ export default function Dashboard() {
   const DetailViewModal = ({ service, onClose }: { service: string | null; onClose: () => void }) => {
     if (!service) return null
 
+    const handleViewMetrics = () => {
+      const metricsData = `
+Service: ${service}
+Current Usage: High
+Cost Trend: ↓ 5%
+Optimization: Medium
+Recommendation: Review sizing
+
+Detailed Metrics Report:
+- CPU Utilization: 78%
+- Memory Usage: 65%
+- Network I/O: 450 Mbps
+- Disk I/O: 320 IOPS
+- Cost per hour: $2.45
+- Monthly projection: $1,764
+
+Generated: ${new Date().toLocaleString()}
+      `.trim()
+      
+      alert('📊 Detailed Metrics Report\n\n' + metricsData)
+    }
+
+    const handleApplyOptimization = () => {
+      const optimizationSteps = `
+Optimization Recommendations for ${service}:
+
+1. Right-size instances
+   - Current: t3.large
+   - Recommended: t3.medium
+   - Estimated savings: $340/month
+
+2. Enable auto-scaling
+   - Min instances: 2
+   - Max instances: 8
+   - Estimated savings: $180/month
+
+3. Use Reserved Instances
+   - 1-year commitment
+   - Estimated savings: $520/month
+
+4. Implement caching
+   - Reduce database calls by 40%
+   - Estimated savings: $95/month
+
+Total Potential Savings: $1,135/month
+
+Status: Ready to apply
+      `.trim()
+      
+      alert('💰 Optimization Recommendations\n\n' + optimizationSteps)
+    }
+
+    const handleExportReport = () => {
+      const reportData = `Service,Current Usage,Cost Trend,Optimization,Recommendation,Monthly Cost,Potential Savings
+${service},High,↓ 5%,Medium,Review sizing,$2450,$1135
+${service} - CPU,78%,Stable,High,Optimize sizing,$1200,$450
+${service} - Memory,65%,Increasing,Medium,Monitor growth,$800,$280
+${service} - Network,450 Mbps,Stable,Low,Current optimal,$300,$0
+${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
+
+      const blob = new Blob([reportData], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${service}-optimization-report-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      window.URL.revokeObjectURL(url)
+      alert('✅ Report exported successfully!\n\nFile: ' + a.download)
+    }
+
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
@@ -353,13 +423,22 @@ export default function Dashboard() {
             <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
               <p className="text-lg font-semibold text-gray-700 mb-4">Actions:</p>
               <div className="space-y-3">
-                <button className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                <button 
+                  onClick={handleViewMetrics}
+                  className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                >
                   📊 View Detailed Metrics
                 </button>
-                <button className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                <button 
+                  onClick={handleApplyOptimization}
+                  className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                >
                   ✅ Apply Optimization
                 </button>
-                <button className="w-full px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                <button 
+                  onClick={handleExportReport}
+                  className="w-full px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                >
                   📥 Export Report
                 </button>
               </div>
