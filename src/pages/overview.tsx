@@ -378,13 +378,36 @@ export default function Overview() {
                 <div className="p-6 bg-gray-50 rounded-2xl">
                   <p className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Recommended Actions</p>
                   <div className="space-y-3">
-                    <button className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all">
+                    <button 
+                      onClick={() => {
+                        alert('📊 Opening detailed report...\n\nThis would generate a comprehensive PDF report with:\n- Historical cost trends\n- Service breakdown\n- Regional analysis\n- Recommendations');
+                      }}
+                      className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    >
                       📊 View Detailed Report
                     </button>
-                    <button className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all">
+                    <button 
+                      onClick={() => {
+                        alert('💰 Cost Optimization Analysis\n\nPotential savings opportunities:\n- Reserved Instances: $2,400/year\n- Spot Instances: $1,800/year\n- Unused resources: $900/year\n\nTotal potential savings: $5,100/year');
+                      }}
+                      className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    >
                       💰 Optimize Costs
                     </button>
-                    <button className="w-full px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 font-semibold shadow-lg hover:shadow-xl transition-all">
+                    <button 
+                      onClick={() => {
+                        const csvData = `Date,Service,Cost,Region\n${new Date().toISOString().split('T')[0]},EC2,1200,us-east-1\n${new Date().toISOString().split('T')[0]},S3,450,us-west-2\n${new Date().toISOString().split('T')[0]},RDS,800,eu-west-1`;
+                        const blob = new Blob([csvData], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `billing-report-${new Date().toISOString().split('T')[0]}.csv`;
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        alert('✅ Data exported successfully!');
+                      }}
+                      className="w-full px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    >
                       📥 Export Data
                     </button>
                   </div>
