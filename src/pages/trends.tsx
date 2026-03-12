@@ -62,19 +62,14 @@ export default function Trends() {
   if (loading) {
     return (
       <Layout>
-        <div className="space-y-6">
+        <div className="premium-space-card">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Cost Trends & Forecasting</h1>
-            <p className="text-gray-600">Loading trends data...</p>
+            <h1 className="premium-header-gradient from-slate-900 to-slate-700">Cost Trends & Forecasting</h1>
+            <p className="premium-subheader">Loading trends data...</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="premium-grid-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
-                <div className="animate-pulse">
-                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-3"></div>
-                  <div className="h-8 bg-gray-300 rounded w-1/2"></div>
-                </div>
-              </div>
+              <div key={i} className="premium-metric-card premium-loading"></div>
             ))}
           </div>
         </div>
@@ -84,28 +79,23 @@ export default function Trends() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="premium-space-section">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cost Trends & Forecasting</h1>
-          <p className="text-gray-600 text-lg font-medium mt-2">
-            Historical trends, growth patterns, and cost forecasting analysis
-          </p>
+          <h1 className="premium-header-gradient from-slate-900 to-slate-700">Cost Trends & Forecasting</h1>
+          <p className="premium-subheader">Historical trends, growth patterns, and cost forecasting analysis</p>
         </div>
 
-        {/* Real Trend Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+        <div className="premium-grid-4">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics && metrics.monthlyGrowth >= 0 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-red-400 to-red-500'
-                }`}>
-                  {metrics && metrics.monthlyGrowth >= 0 ? '📈' : '📉'}
-                </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.monthlyGrowth >= 0 ? 'from-green-400 to-green-500' : 'from-red-400 to-red-500'
+              }`}>
+                {metrics && metrics.monthlyGrowth >= 0 ? '📈' : '📉'}
               </div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Monthly Growth</p>
-                <p className={`text-3xl font-bold leading-tight ${
+                <p className="premium-text-label">Monthly Growth</p>
+                <p className={`premium-text-value ${
                   metrics && metrics.monthlyGrowth >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}>
                   {metrics ? formatPercentage(metrics.monthlyGrowth) : '0%'}
@@ -114,33 +104,23 @@ export default function Trends() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-gray-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
-                  🔮
-                </div>
-              </div>
+              <div className="premium-icon-box-gradient from-purple-400 to-purple-500 text-white">🔮</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Next Month Forecast</p>
-                <p className="text-3xl font-bold text-gray-800 leading-tight">
-                  {metrics ? formatCurrency(metrics.nextMonthForecast) : '$0'}
-                </p>
+                <p className="premium-text-label">Next Month Forecast</p>
+                <p className="premium-text-value">{metrics ? formatCurrency(metrics.nextMonthForecast) : '$0'}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-gray-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
-                  📊
-                </div>
-              </div>
+              <div className="premium-icon-box-gradient from-blue-400 to-blue-500 text-white">📊</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">YoY Growth</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics && metrics.yearlyGrowth >= 0 ? 'text-gray-800' : 'text-red-600'
+                <p className="premium-text-label">YoY Growth</p>
+                <p className={`premium-text-value ${
+                  metrics && metrics.yearlyGrowth >= 0 ? 'text-gray-900' : 'text-red-600'
                 }`}>
                   {metrics ? formatPercentage(metrics.yearlyGrowth) : '0%'}
                 </p>
@@ -148,19 +128,15 @@ export default function Trends() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics && metrics.efficiencyScore > 80 ? 'bg-gradient-to-br from-green-400 to-green-500' : 
-                  metrics && metrics.efficiencyScore > 60 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-red-400 to-red-500'
-                }`}>
-                  🎯
-                </div>
-              </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.efficiencyScore > 80 ? 'from-green-400 to-green-500' : 
+                metrics && metrics.efficiencyScore > 60 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              }`}>🎯</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Efficiency Score</p>
-                <p className={`text-3xl font-bold leading-tight ${
+                <p className="premium-text-label">Efficiency Score</p>
+                <p className={`premium-text-value ${
                   metrics && metrics.efficiencyScore > 80 ? 'text-green-600' : 
                   metrics && metrics.efficiencyScore > 60 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
@@ -171,10 +147,12 @@ export default function Trends() {
           </div>
         </div>
 
-        {/* Trend Analysis */}
         {metrics && (
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Trend Analysis</h3>
+          <div className="premium-metric-card premium-hover-lift">
+            <h3 className="premium-section-header">
+              <span className="premium-section-divider from-blue-600 to-indigo-600"></span>
+              Trend Analysis
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold shadow-md ${
@@ -182,7 +160,7 @@ export default function Trends() {
                 }`}>
                   {metrics.trends.direction === 'increasing' ? '↗️' : '↘️'} {metrics.trends.direction}
                 </div>
-                <p className="text-xs text-gray-500 mt-2 font-semibold uppercase tracking-wide">Direction</p>
+                <p className="premium-text-label mt-3">Direction</p>
               </div>
               <div className="text-center">
                 <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold shadow-md ${
@@ -191,7 +169,7 @@ export default function Trends() {
                 }`}>
                   {metrics.trends.velocity === 'fast' ? '🚀' : metrics.trends.velocity === 'moderate' ? '🚶' : '🐌'} {metrics.trends.velocity}
                 </div>
-                <p className="text-xs text-gray-500 mt-2 font-semibold uppercase tracking-wide">Velocity</p>
+                <p className="premium-text-label mt-3">Velocity</p>
               </div>
               <div className="text-center">
                 <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-bold shadow-md ${
@@ -199,16 +177,14 @@ export default function Trends() {
                 }`}>
                   {metrics.trends.stability === 'stable' ? '📊' : '📈'} {metrics.trends.stability}
                 </div>
-                <p className="text-xs text-gray-500 mt-2 font-semibold uppercase tracking-wide">Stability</p>
+                <p className="premium-text-label mt-3">Stability</p>
               </div>
             </div>
           </div>
         )}
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 text-sm">
-            All data is fetched directly from AWS APIs for real-time accuracy
-          </p>
+        <div className="text-center py-4">
+          <p className="premium-text-muted">All data is fetched directly from AWS APIs for real-time accuracy</p>
         </div>
       </div>
     </Layout>

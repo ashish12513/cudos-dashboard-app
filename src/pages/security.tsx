@@ -57,12 +57,6 @@ export default function Security() {
     return 'text-red-600'
   }
 
-  const getScoreBgColor = (score: number) => {
-    if (score >= 90) return 'bg-green-100'
-    if (score >= 70) return 'bg-yellow-100'
-    return 'bg-red-100'
-  }
-
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'high': return 'bg-red-100 text-red-800'
@@ -84,19 +78,14 @@ export default function Security() {
   if (loading) {
     return (
       <Layout>
-        <div className="space-y-6">
+        <div className="premium-space-card">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Security Dashboard</h1>
-            <p className="text-gray-600">Loading security metrics...</p>
+            <h1 className="premium-header-gradient from-slate-900 to-slate-700">Security Dashboard</h1>
+            <p className="premium-subheader">Loading security metrics...</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="premium-grid-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
-                <div className="animate-pulse">
-                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-3"></div>
-                  <div className="h-8 bg-gray-300 rounded w-1/2"></div>
-                </div>
-              </div>
+              <div key={i} className="premium-metric-card premium-loading"></div>
             ))}
           </div>
         </div>
@@ -106,130 +95,109 @@ export default function Security() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="premium-space-section">
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Security Dashboard</h1>
-          <p className="text-gray-600 text-lg font-medium mt-2">
-            Security posture, compliance status, and threat monitoring
-          </p>
+          <h1 className="premium-header-gradient from-slate-900 to-slate-700">Security Dashboard</h1>
+          <p className="premium-subheader">Security posture, compliance status, and threat monitoring</p>
         </div>
 
-        {/* Security Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+        <div className="premium-grid-4">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics ? getScoreBgColor(metrics.securityScore).replace('bg-', 'bg-gradient-to-br from-').replace('-100', '-400 to-').replace('100', '500') : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                }`}>
-                  🛡️
-                </div>
-              </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.securityScore >= 90 ? 'from-green-400 to-green-500' : 
+                metrics && metrics.securityScore >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              }`}>🛡️</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Security Score</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics ? getScoreColor(metrics.securityScore) : 'text-gray-800'
-                }`}>
+                <p className="premium-text-label">Security Score</p>
+                <p className={`premium-text-value ${getScoreColor(metrics?.securityScore || 0)}`}>
                   {metrics?.securityScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics ? getScoreBgColor(metrics.complianceScore).replace('bg-', 'bg-gradient-to-br from-').replace('-100', '-400 to-').replace('100', '500') : 'bg-gradient-to-br from-gray-400 to-gray-500'
-                }`}>
-                  ✅
-                </div>
-              </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.complianceScore >= 90 ? 'from-green-400 to-green-500' : 
+                metrics && metrics.complianceScore >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              }`}>✅</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Compliance</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics ? getScoreColor(metrics.complianceScore) : 'text-gray-800'
-                }`}>
+                <p className="premium-text-label">Compliance</p>
+                <p className={`premium-text-value ${getScoreColor(metrics?.complianceScore || 0)}`}>
                   {metrics?.complianceScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics && metrics.criticalFindings > 0 ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-green-400 to-green-500'
-                }`}>
-                  🚨
-                </div>
-              </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.criticalFindings > 0 ? 'from-red-400 to-red-500' : 'from-green-400 to-green-500'
+              }`}>🚨</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Critical Findings</p>
-                <p className={`text-3xl font-bold leading-tight ${
+                <p className="premium-text-label">Critical Findings</p>
+                <p className={`premium-text-value ${
                   metrics && metrics.criticalFindings > 0 ? 'text-red-600' : 'text-green-600'
                 }`}>
                   {metrics?.criticalFindings || 0}
                 </p>
-                <p className="text-xs text-gray-500 font-medium">
-                  {metrics?.securityFindings || 0} total findings
-                </p>
+                <p className="premium-text-muted">{metrics?.securityFindings || 0} total</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+          <div className="premium-metric-card premium-hover-lift">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                  metrics && metrics.mfaPercentage >= 90 ? 'bg-gradient-to-br from-green-400 to-green-500' : 
-                  metrics && metrics.mfaPercentage >= 70 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-red-400 to-red-500'
-                }`}>
-                  🔐
-                </div>
-              </div>
+              <div className={`premium-icon-box-gradient text-white ${
+                metrics && metrics.mfaPercentage >= 90 ? 'from-green-400 to-green-500' : 
+                metrics && metrics.mfaPercentage >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              }`}>🔐</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">MFA Enabled</p>
-                <p className={`text-3xl font-bold leading-tight ${
+                <p className="premium-text-label">MFA Enabled</p>
+                <p className={`premium-text-value ${
                   metrics && metrics.mfaPercentage >= 90 ? 'text-green-600' : 
                   metrics && metrics.mfaPercentage >= 70 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
                   {metrics?.mfaPercentage || 0}%
                 </p>
-                <p className="text-xs text-gray-500 font-medium">
-                  {metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0} users
-                </p>
+                <p className="premium-text-muted">{metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Security Findings Summary */}
         {metrics && (metrics.securityFindings > 0 || metrics.guardDutyFindings > 0) && (
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Security Findings</h3>
+          <div className="premium-metric-card premium-hover-lift">
+            <h3 className="premium-section-header">
+              <span className="premium-section-divider from-red-600 to-pink-600"></span>
+              Security Findings
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="text-4xl font-bold text-red-600">{metrics.criticalFindings}</div>
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wide">Critical</p>
+                <p className="premium-text-label mt-2">Critical</p>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-yellow-600">{metrics.highFindings}</div>
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wide">High</p>
+                <p className="premium-text-label mt-2">High</p>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-blue-600">{metrics.guardDutyFindings}</div>
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wide">GuardDuty</p>
+                <p className="premium-text-label mt-2">GuardDuty</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Security Recommendations */}
         {metrics && metrics.recommendations.length > 0 && (
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6">Security Recommendations</h3>
+          <div className="premium-metric-card premium-hover-lift">
+            <h3 className="premium-section-header">
+              <span className="premium-section-divider from-purple-600 to-pink-600"></span>
+              Security Recommendations
+            </h3>
             <div className="space-y-4">
               {metrics.recommendations.map((rec, index) => (
                 <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-100">
@@ -251,10 +219,8 @@ export default function Security() {
           </div>
         )}
 
-        <div className="mt-8 text-center">
-          <p className="text-gray-600 text-sm">
-            All data is fetched directly from AWS APIs for real-time accuracy
-          </p>
+        <div className="text-center py-4">
+          <p className="premium-text-muted">All data is fetched directly from AWS APIs for real-time accuracy</p>
         </div>
       </div>
     </Layout>
