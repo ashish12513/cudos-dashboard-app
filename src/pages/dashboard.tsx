@@ -41,6 +41,9 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
+  const [filterType, setFilterType] = useState<'service' | 'region' | 'all'>('all')
+  const [selectedService, setSelectedService] = useState<string | null>(null)
+  const [showDetailView, setShowDetailView] = useState(false)
 
   const fetchAllData = async (accountId?: string) => {
     try {
@@ -177,7 +180,8 @@ export default function Dashboard() {
             items: data.cost.topServices.map((s) => ({
               label: s.service,
               value: formatCurrency(s.cost),
-              percentage: ((s.cost / data.cost.totalSpent) * 100).toFixed(1)
+              percentage: ((s.cost / data.cost.totalSpent) * 100).toFixed(1),
+              clickable: true
             }))
           }
         case 'monthlyGrowth':
@@ -211,27 +215,27 @@ export default function Dashboard() {
           return {
             title: 'EC2 Instances',
             items: [
-              { label: 'Total Instances', value: data.usage.ec2Instances.toString() },
-              { label: 'Running', value: data.usage.runningInstances.toString() },
-              { label: 'Stopped', value: (data.usage.ec2Instances - data.usage.runningInstances).toString() }
+              { label: 'Total Instances', value: data.usage.ec2Instances.toString(), clickable: true },
+              { label: 'Running', value: data.usage.runningInstances.toString(), clickable: true },
+              { label: 'Stopped', value: (data.usage.ec2Instances - data.usage.runningInstances).toString(), clickable: true }
             ]
           }
         case 'lambda':
           return {
             title: 'Lambda Functions',
             items: [
-              { label: 'Total Functions', value: data.compute.lambdaFunctions.toString() },
-              { label: 'Active', value: Math.ceil(data.compute.lambdaFunctions * 0.8).toString() },
-              { label: 'Inactive', value: Math.floor(data.compute.lambdaFunctions * 0.2).toString() }
+              { label: 'Total Functions', value: data.compute.lambdaFunctions.toString(), clickable: true },
+              { label: 'Active', value: Math.ceil(data.compute.lambdaFunctions * 0.8).toString(), clickable: true },
+              { label: 'Inactive', value: Math.floor(data.compute.lambdaFunctions * 0.2).toString(), clickable: true }
             ]
           }
         case 'storage':
           return {
             title: 'Storage Usage',
             items: [
-              { label: 'Total Storage', value: `${data.usage.storageUsageTB.toFixed(2)} TB` },
-              { label: 'Data Transfer', value: `${data.usage.dataTransferGB.toLocaleString()} GB` },
-              { label: 'Utilization', value: `${data.usage.avgUtilization}%` }
+              { label: 'Total Storage', value: `${data.usage.storageUsageTB.toFixed(2)} TB`, clickable: true },
+              { label: 'Data Transfer', value: `${data.usage.dataTransferGB.toLocaleString()} GB`, clickable: true },
+              { label: 'Utilization', value: `${data.usage.avgUtilization}%`, clickable: true }
             ]
           }
         case 'security':
@@ -264,16 +268,88 @@ export default function Dashboard() {
           </div>
           <div className="space-y-3">
             {details.items.map((item, idx) => (
-              <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+              <div 
+                key={idx} 
+                onClick={() => {
+                  if ('clickable' in item && item.clickable) {
+                    setSelectedService(item.label)
+                    setShowDetailView(true)
+                  }
+                }}
+                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
+                  'clickable' in item && item.clickable ? 'cursor-pointer hover:bg-blue-50 hover:border-l-4 hover:border-blue-500' : ''
+                }`}
+              >
                 <span className="text-gray-700 font-medium">{item.label}</span>
                 <div className="text-right">
                   <span className="text-lg font-bold text-gray-800">{item.value}</span>
                   {'percentage' in item && item.percentage && (
                     <p className="text-xs text-gray-500">{item.percentage}% of total</p>
                   )}
+                  {'clickable' in item && item.clickable && <p className="text-xs text-blue-500">Click for details →</p>}
                 </div>
               </div>
             ))}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-full mt-6 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  const DetailViewModal = ({ service, onClose }: { service: string | null; onClose: () => void }) => {
+    if (!service) return null
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">Details: {service}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-gray-600">Current Usage</p>
+                <p className="text-3xl font-bold text-blue-600">High</p>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <p className="text-sm text-gray-600">Cost Trend</p>
+                <p className="text-3xl font-bold text-green-600">↓ 5%</p>
+              </div>
+              <div className="p-4 bg-yellow-50 rounded-lg">
+                <p className="text-sm text-gray-600">Optimization</p>
+                <p className="text-3xl font-bold text-yellow-600">Medium</p>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <p className="text-sm text-gray-600">Recommendation</p>
+                <p className="text-sm font-bold text-purple-600">Review sizing</p>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Actions:</p>
+              <div className="space-y-2">
+                <button className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
+                  View Detailed Metrics
+                </button>
+                <button className="w-full px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm">
+                  Apply Optimization
+                </button>
+                <button className="w-full px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm">
+                  Export Report
+                </button>
+              </div>
+            </div>
           </div>
           <button
             onClick={onClose}
@@ -315,24 +391,35 @@ export default function Dashboard() {
     <Layout>
       <div className="space-y-8">
         <div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Financial Command Center</h1>
               <p className="text-gray-600 text-lg font-medium mt-2">
                 Turning AWS spend into strategic advantage.
               </p>
             </div>
-            <button
-              onClick={() => {
-                setLoading(true)
-                setData(null)
-                const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
-                fetchAllData(savedAccount || undefined)
-              }}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              🔄 Refresh Data
-            </button>
+            <div className="flex gap-3">
+              <select 
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'service' | 'region' | 'all')}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Services</option>
+                <option value="service">By Service</option>
+                <option value="region">By Region</option>
+              </select>
+              <button
+                onClick={() => {
+                  setLoading(true)
+                  setData(null)
+                  const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
+                  fetchAllData(savedAccount || undefined)
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                🔄 Refresh Data
+              </button>
+            </div>
           </div>
         </div>
 
@@ -744,6 +831,7 @@ export default function Dashboard() {
       </div>
 
       <CardDetailsModal card={expandedCard} onClose={() => setExpandedCard(null)} />
+      <DetailViewModal service={showDetailView ? selectedService : null} onClose={() => setShowDetailView(false)} />
     </Layout>
   )
 }
