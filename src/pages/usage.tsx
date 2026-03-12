@@ -223,13 +223,13 @@ export default function Usage() {
                 <div className="space-y-3">
                   <button 
                     onClick={() => alert('📊 Detailed usage report generated')}
-                    className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    className="w-full px-5 py-3 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
                   >
                     📊 View Report
                   </button>
                   <button 
                     onClick={() => alert('💰 Optimization recommendations generated')}
-                    className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
+                    className="w-full px-5 py-3 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
                   >
                     💰 Optimize
                   </button>

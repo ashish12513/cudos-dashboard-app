@@ -300,13 +300,13 @@ export default function Dashboard() {
             </button>
             <button
               onClick={() => alert('📊 Detailed report generated')}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
             >
               📊 View Report
             </button>
             <button
               onClick={() => alert('💰 Optimization recommendations generated')}
-              className="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
             >
               💰 Optimize
             </button>
@@ -425,19 +425,19 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <div className="space-y-3">
                 <button 
                   onClick={handleViewMetrics}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
                 >
                   📊 View Detailed Metrics
                 </button>
                 <button 
                   onClick={handleApplyOptimization}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
                 >
                   ✅ Apply Optimization
                 </button>
                 <button 
                   onClick={handleExportReport}
-                  className="w-full px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
                 >
                   📥 Export Report
                 </button>
@@ -446,7 +446,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           </div>
           <button
             onClick={onClose}
-            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
           >
             Close
           </button>
@@ -495,7 +495,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <select 
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as 'service' | 'region' | 'all')}
-                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B7D3F]"
               >
                 <option value="all">All Services</option>
                 <option value="service">By Service</option>
@@ -508,7 +508,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                   const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
                   fetchAllData(savedAccount || undefined)
                 }}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                className="px-4 py-2 bg-[#1B7D3F] text-white rounded-lg hover:bg-[#155E31] transition-colors"
               >
                 🔄 Refresh Data
               </button>

@@ -46,11 +46,24 @@
 }
 
 .premium-btn-primary {
-  @apply premium-btn bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700;
+  @apply premium-btn bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white hover:from-[#155E31] hover:to-[#0F5C2E] active:scale-95;
 }
 
 .premium-btn-secondary {
-  @apply premium-btn bg-white border border-gray-200 text-gray-900 hover:bg-gray-50 hover:border-gray-300;
+  @apply premium-btn bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white hover:from-[#1B7D3F] hover:to-[#155E31] active:scale-95;
+}
+
+.premium-btn-success {
+  @apply premium-btn bg-gradient-to-r from-[#1B7D3F] to-[#0F5C2E] text-white hover:from-[#155E31] hover:to-[#0A4620] active:scale-95;
+}
+
+/* Green button variants for all actions */
+.premium-btn-green {
+  @apply premium-btn bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white hover:from-[#155E31] hover:to-[#0F5C2E] active:scale-95;
+}
+
+.premium-btn-green-light {
+  @apply premium-btn bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white hover:from-[#1B7D3F] hover:to-[#155E31] active:scale-95;
 }
 
 /* Premium Inputs */
