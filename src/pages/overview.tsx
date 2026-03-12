@@ -255,18 +255,18 @@ export default function Dashboard() {
     const details = getCardDetails()
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">{details.title}</h2>
+      <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
+          <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 border-b border-gray-200">
+            <h2 className="text-4xl font-bold text-gray-900">{details.title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl"
+              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-lg flex-shrink-0"
             >
               ✕
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
             {details.items.map((item, idx) => (
               <div 
                 key={idx} 
@@ -276,27 +276,41 @@ export default function Dashboard() {
                     setShowDetailView(true)
                   }
                 }}
-                className={`flex justify-between items-center p-3 bg-gray-50 rounded-lg ${
-                  'clickable' in item && item.clickable ? 'cursor-pointer hover:bg-blue-50 hover:border-l-4 hover:border-blue-500' : ''
+                className={`flex justify-between items-center p-5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200 ${
+                  'clickable' in item && item.clickable ? 'cursor-pointer hover:from-blue-50 hover:to-blue-100 hover:border-blue-400 transition-all' : ''
                 }`}
               >
-                <span className="text-gray-700 font-medium">{item.label}</span>
+                <span className="text-gray-800 font-semibold text-lg">{item.label}</span>
                 <div className="text-right">
-                  <span className="text-lg font-bold text-gray-800">{item.value}</span>
+                  <span className="text-3xl font-bold text-gray-900">{item.value}</span>
                   {'percentage' in item && item.percentage && (
-                    <p className="text-xs text-gray-500">{item.percentage}% of total</p>
+                    <p className="text-sm text-gray-600 mt-1">{item.percentage}% of total</p>
                   )}
-                  {'clickable' in item && item.clickable && <p className="text-xs text-blue-500">Click for details →</p>}
+                  {'clickable' in item && item.clickable && <p className="text-sm text-blue-600 font-medium mt-1">Click for details →</p>}
                 </div>
               </div>
             ))}
           </div>
-          <button
-            onClick={onClose}
-            className="w-full mt-6 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            Close
-          </button>
+          <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => alert('📊 Detailed report generated')}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              📊 View Report
+            </button>
+            <button
+              onClick={() => alert('💰 Optimization recommendations generated')}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              💰 Optimize
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -306,54 +320,54 @@ export default function Dashboard() {
     if (!service) return null
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">Details: {service}</h2>
+      <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
+          <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 border-b border-gray-200">
+            <h2 className="text-4xl font-bold text-gray-900">Details: {service}</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl"
+              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-lg flex-shrink-0"
             >
               ✕
             </button>
           </div>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600">Current Usage</p>
-                <p className="text-3xl font-bold text-blue-600">High</p>
+          <div className="space-y-6 max-h-96 overflow-y-auto pr-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Current Usage</p>
+                <p className="text-4xl font-bold text-blue-600">High</p>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-gray-600">Cost Trend</p>
-                <p className="text-3xl font-bold text-green-600">↓ 5%</p>
+              <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Cost Trend</p>
+                <p className="text-4xl font-bold text-green-600">↓ 5%</p>
               </div>
-              <div className="p-4 bg-yellow-50 rounded-lg">
-                <p className="text-sm text-gray-600">Optimization</p>
-                <p className="text-3xl font-bold text-yellow-600">Medium</p>
+              <div className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border border-yellow-200">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Optimization</p>
+                <p className="text-4xl font-bold text-yellow-600">Medium</p>
               </div>
-              <div className="p-4 bg-purple-50 rounded-lg">
-                <p className="text-sm text-gray-600">Recommendation</p>
-                <p className="text-sm font-bold text-purple-600">Review sizing</p>
+              <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
+                <p className="text-sm font-semibold text-gray-600 mb-2">Recommendation</p>
+                <p className="text-lg font-bold text-purple-600">Review sizing</p>
               </div>
             </div>
-            <div className="p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Actions:</p>
-              <div className="space-y-2">
-                <button className="w-full px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm">
-                  View Detailed Metrics
+            <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <p className="text-lg font-semibold text-gray-700 mb-4">Actions:</p>
+              <div className="space-y-3">
+                <button className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                  📊 View Detailed Metrics
                 </button>
-                <button className="w-full px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 text-sm">
-                  Apply Optimization
+                <button className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                  ✅ Apply Optimization
                 </button>
-                <button className="w-full px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 text-sm">
-                  Export Report
+                <button className="w-full px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all text-lg">
+                  📥 Export Report
                 </button>
               </div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-full mt-6 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
           >
             Close
           </button>
