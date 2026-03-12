@@ -88,7 +88,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const navigation = [
-    { name: 'Overview', href: '/dashboard', icon: '📊' },
+    { name: 'Overview', href: '/overview', icon: '📊' },
+    { name: 'Dashboard', href: '/dashboard', icon: '💼' },
     { name: 'Usage', href: '/usage', icon: '📈' },
     { name: 'Compute', href: '/compute', icon: '🖥️' },
     { name: 'Trends', href: '/trends', icon: '📉' },
