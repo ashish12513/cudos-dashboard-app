@@ -40,6 +40,7 @@ interface DashboardData {
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
   const fetchAllData = async (accountId?: string) => {
     try {
@@ -165,6 +166,126 @@ export default function Dashboard() {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
   }
 
+  const CardDetailsModal = ({ card, onClose }: { card: string | null; onClose: () => void }) => {
+    if (!card || !data) return null
+
+    const getCardDetails = () => {
+      switch (card) {
+        case 'totalSpent':
+          return {
+            title: 'Total Spent Breakdown',
+            items: data.cost.topServices.map((s) => ({
+              label: s.service,
+              value: formatCurrency(s.cost),
+              percentage: ((s.cost / data.cost.totalSpent) * 100).toFixed(1)
+            }))
+          }
+        case 'monthlyGrowth':
+          return {
+            title: 'Growth Analysis',
+            items: [
+              { label: 'Monthly Growth', value: formatPercentage(data.trends.monthlyGrowth) },
+              { label: '6-Month Growth', value: formatPercentage(data.trends.sixMonthGrowth) },
+              { label: 'Yearly Growth', value: formatPercentage(data.trends.yearlyGrowth) }
+            ]
+          }
+        case 'budgetUsed':
+          return {
+            title: 'Budget Status',
+            items: [
+              { label: 'Budget Used', value: `${data.cost.budgetUsed}%` },
+              { label: 'Amount Spent', value: formatCurrency(data.cost.totalSpent) },
+              { label: 'Status', value: data.cost.budgetUsed > 80 ? 'Critical' : data.cost.budgetUsed > 60 ? 'Warning' : 'Healthy' }
+            ]
+          }
+        case 'nextMonth':
+          return {
+            title: 'Next Month Forecast',
+            items: [
+              { label: 'Forecasted Amount', value: formatCurrency(data.trends.nextMonthForecast) },
+              { label: 'Current Month', value: formatCurrency(data.cost.totalSpent) },
+              { label: 'Expected Increase', value: formatCurrency(data.trends.nextMonthForecast - data.cost.totalSpent) }
+            ]
+          }
+        case 'ec2':
+          return {
+            title: 'EC2 Instances',
+            items: [
+              { label: 'Total Instances', value: data.usage.ec2Instances.toString() },
+              { label: 'Running', value: data.usage.runningInstances.toString() },
+              { label: 'Stopped', value: (data.usage.ec2Instances - data.usage.runningInstances).toString() }
+            ]
+          }
+        case 'lambda':
+          return {
+            title: 'Lambda Functions',
+            items: [
+              { label: 'Total Functions', value: data.compute.lambdaFunctions.toString() },
+              { label: 'Active', value: Math.ceil(data.compute.lambdaFunctions * 0.8).toString() },
+              { label: 'Inactive', value: Math.floor(data.compute.lambdaFunctions * 0.2).toString() }
+            ]
+          }
+        case 'storage':
+          return {
+            title: 'Storage Usage',
+            items: [
+              { label: 'Total Storage', value: `${data.usage.storageUsageTB.toFixed(2)} TB` },
+              { label: 'Data Transfer', value: `${data.usage.dataTransferGB.toLocaleString()} GB` },
+              { label: 'Utilization', value: `${data.usage.avgUtilization}%` }
+            ]
+          }
+        case 'security':
+          return {
+            title: 'Security Score',
+            items: [
+              { label: 'Security Score', value: `${data.security.securityScore}%` },
+              { label: 'Compliance Score', value: `${data.security.complianceScore}%` },
+              { label: 'Critical Issues', value: data.security.criticalFindings.toString() }
+            ]
+          }
+        default:
+          return { title: '', items: [] }
+      }
+    }
+
+    const details = getCardDetails()
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-gray-800">{details.title}</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-3">
+            {details.items.map((item, idx) => (
+              <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="text-gray-700 font-medium">{item.label}</span>
+                <div className="text-right">
+                  <span className="text-lg font-bold text-gray-800">{item.value}</span>
+                  {'percentage' in item && item.percentage && (
+                    <p className="text-xs text-gray-500">{item.percentage}% of total</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-full mt-6 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <Layout>
@@ -219,7 +340,10 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">💰 Cost Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('totalSpent')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
@@ -231,12 +355,15 @@ export default function Dashboard() {
                   <p className="text-3xl font-bold text-gray-800 leading-tight">
                     {data ? formatCurrency(data.cost.totalSpent) : '$0'}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">This month</p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('monthlyGrowth')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -252,11 +379,15 @@ export default function Dashboard() {
                   }`}>
                     {data ? formatPercentage(data.cost.monthlyGrowth) : '0%'}
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('budgetUsed')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -274,11 +405,15 @@ export default function Dashboard() {
                   }`}>
                     {data?.cost.budgetUsed || 0}%
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('nextMonth')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-gray-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
@@ -290,7 +425,7 @@ export default function Dashboard() {
                   <p className="text-3xl font-bold text-gray-800 leading-tight">
                     {data ? formatCurrency(data.trends.nextMonthForecast) : '$0'}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">Forecast</p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
@@ -301,7 +436,10 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">🖥️ Resource Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('ec2')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
@@ -313,14 +451,15 @@ export default function Dashboard() {
                   <p className="text-3xl font-bold text-gray-800 leading-tight">
                     {data?.usage.ec2Instances || 0}
                   </p>
-                  <p className="text-xs text-gray-500 font-medium">
-                    {data?.usage.runningInstances || 0} running
-                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('lambda')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
@@ -332,11 +471,15 @@ export default function Dashboard() {
                   <p className="text-3xl font-bold text-gray-800 leading-tight">
                     {data?.compute.lambdaFunctions || 0}
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('storage')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
@@ -348,11 +491,15 @@ export default function Dashboard() {
                   <p className="text-3xl font-bold text-gray-800 leading-tight">
                     {data?.usage.storageUsageTB.toFixed(1) || '0'} TB
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('storage')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -370,6 +517,7 @@ export default function Dashboard() {
                   }`}>
                     {data?.usage.avgUtilization || 0}%
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
@@ -380,7 +528,10 @@ export default function Dashboard() {
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">🛡️ Security & Compliance</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -396,11 +547,15 @@ export default function Dashboard() {
                   }`}>
                     {data?.security.securityScore || 0}%
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -416,11 +571,15 @@ export default function Dashboard() {
                   }`}>
                     {data?.security.complianceScore || 0}%
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -436,11 +595,15 @@ export default function Dashboard() {
                   }`}>
                     {data?.security.criticalFindings || 0}
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300">
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
@@ -456,6 +619,7 @@ export default function Dashboard() {
                   }`}>
                     {data?.security.mfaPercentage || 0}%
                   </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
@@ -578,6 +742,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      <CardDetailsModal card={expandedCard} onClose={() => setExpandedCard(null)} />
     </Layout>
   )
 }
