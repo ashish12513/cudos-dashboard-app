@@ -88,8 +88,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const navigation = [
-    { name: 'Overview', href: '/overview', icon: '📊', color: 'from-blue-500 to-indigo-600' },
     { name: 'Dashboard', href: '/dashboard', icon: '💼', color: 'from-purple-500 to-pink-600' },
+    { name: 'Overview', href: '/overview', icon: '📊', color: 'from-blue-500 to-indigo-600' },
     { name: 'Usage', href: '/usage', icon: '📈', color: 'from-emerald-500 to-teal-600' },
     { name: 'Compute', href: '/compute', icon: '🖥️', color: 'from-amber-500 to-orange-600' },
     { name: 'Trends', href: '/trends', icon: '📉', color: 'from-rose-500 to-red-600' },
