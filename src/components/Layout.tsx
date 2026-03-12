@@ -21,7 +21,7 @@ function AccountSelector({ selectedAccount, onAccountChange, accounts }: Account
       <select
         value={selectedAccount}
         onChange={(e) => onAccountChange(e.target.value)}
-        className="w-full px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl text-gray-800 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 shadow-sm"
+        className="w-full px-4 py-3 bg-gradient-to-r from-[#f0fdf4] to-[#dcfce7] border border-[#1B7D3F]/20 rounded-xl text-gray-800 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] focus:border-transparent transition-all duration-200 hover:border-[#1B7D3F]/40 shadow-sm"
       >
         <option value="all">All Accounts</option>
         {accounts.map((account) => (
@@ -88,28 +88,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: '💼', color: 'from-purple-500 to-pink-600' },
-    { name: 'Overview', href: '/overview', icon: '📊', color: 'from-blue-500 to-indigo-600' },
-    { name: 'Usage', href: '/usage', icon: '📈', color: 'from-emerald-500 to-teal-600' },
-    { name: 'Compute', href: '/compute', icon: '🖥️', color: 'from-amber-500 to-orange-600' },
-    { name: 'Trends', href: '/trends', icon: '📉', color: 'from-rose-500 to-red-600' },
-    { name: 'Security', href: '/security', icon: '🛡️', color: 'from-violet-500 to-purple-600' },
+    { name: 'Dashboard', href: '/dashboard', icon: '💼', color: 'from-[#1B7D3F] to-[#155E31]' },
+    { name: 'Overview', href: '/overview', icon: '📊', color: 'from-[#2BA84F] to-[#1B7D3F]' },
+    { name: 'Usage', href: '/usage', icon: '📈', color: 'from-[#1B7D3F] to-[#0F5C2E]' },
+    { name: 'Compute', href: '/compute', icon: '🖥️', color: 'from-[#2BA84F] to-[#155E31]' },
+    { name: 'Trends', href: '/trends', icon: '📉', color: 'from-[#155E31] to-[#0F5C2E]' },
+    { name: 'Security', href: '/security', icon: '🛡️', color: 'from-[#1B7D3F] to-[#2BA84F]' },
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-[#f0fdf4]/30 to-[#dcfce7]/30">
       {/* Premium Sidebar */}
       <div className="fixed inset-y-0 left-0 z-50 w-80 premium-glass border-r border-white/20 shadow-2xl">
         <div className="flex flex-col h-full">
           {/* Premium Logo */}
           <div className="flex items-center justify-center h-24 px-8 border-b border-white/10">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 premium-gradient rounded-2xl flex items-center justify-center shadow-lg premium-glow">
+              <div className="w-14 h-14 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl flex items-center justify-center shadow-lg premium-glow">
                 <span className="text-white font-bold text-2xl">💰</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold premium-text-gradient tracking-tight">Cloud Financial</h1>
-                <p className="text-xs text-gray-500 font-medium tracking-wider uppercase mt-1">Command Center</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#2BA84F] bg-clip-text text-transparent tracking-tight">Cloud Financial</h1>
+                <p className="text-xs text-gray-500 font-medium tracking-wider uppercase mt-1">Redington India</p>
               </div>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="px-8 py-6 border-t border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className="w-12 h-12 premium-gradient rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-base">A</span>
                 </div>
                 <div className="ml-4">

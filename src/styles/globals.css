@@ -5,19 +5,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --premium-primary: #1a1f36;
-  --premium-secondary: #2d3748;
-  --premium-accent: #4f46e5;
-  --premium-accent-light: #6366f1;
-  --premium-accent-dark: #4338ca;
-  --premium-success: #10b981;
+  --premium-primary: #0f172a;
+  --premium-secondary: #1e293b;
+  --premium-accent: #1B7D3F;
+  --premium-accent-light: #2BA84F;
+  --premium-accent-dark: #155E31;
+  --premium-success: #1B7D3F;
   --premium-warning: #f59e0b;
   --premium-danger: #ef4444;
   --premium-surface: #ffffff;
   --premium-surface-dark: #0f172a;
   --premium-border: #e2e8f0;
-  --premium-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
-  --premium-glow: 0 0 40px rgba(79, 70, 229, 0.15);
+  --premium-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  --premium-glow: 0 0 40px rgba(27, 125, 63, 0.25);
 }
 
 html,
