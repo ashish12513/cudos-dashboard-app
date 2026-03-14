@@ -2,11 +2,15 @@
 
 /* Premium Metric Cards */
 .premium-metric-card {
-  @apply bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1;
+  @apply bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl p-6 border border-[#1B7D3F]/20 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40;
 }
 
 .premium-metric-card-dark {
   @apply bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 border border-slate-700 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1;
+}
+
+.premium-metric-card-white {
+  @apply bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-1;
 }
 
 /* Premium Icon Boxes */

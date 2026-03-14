@@ -119,7 +119,7 @@ export default function RISPSummary() {
 
         {/* Utilization Trends */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">📊 RI Coverage Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data.riUtilization}>
@@ -132,7 +132,7 @@ export default function RISPSummary() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">📊 SP Coverage Trend</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data.spUtilization}>
@@ -148,7 +148,7 @@ export default function RISPSummary() {
 
         {/* Service-level Coverage */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">🖥️ RI Coverage by Service</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.riByService}>
@@ -161,7 +161,7 @@ export default function RISPSummary() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">🖥️ SP Coverage by Service</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.spByService}>

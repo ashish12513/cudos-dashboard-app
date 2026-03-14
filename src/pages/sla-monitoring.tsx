@@ -123,7 +123,7 @@ export default function SLAMonitoring() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">SLA Metrics by Priority</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {data.sla_metrics.map((metric, idx) => (
-              <div key={idx} className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+              <div key={idx} className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
                 <p className="text-lg font-bold text-gray-900 mb-4">{metric.priority}</p>
                 <div className="space-y-4">
                   <div>
@@ -154,7 +154,7 @@ export default function SLAMonitoring() {
         </div>
 
         {/* Daily Trend */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <h3 className="text-xl font-bold text-gray-900 mb-6">Daily SLA Compliance Trend</h3>
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart data={data.daily_trend}>
@@ -170,7 +170,7 @@ export default function SLAMonitoring() {
         </div>
 
         {/* Compliance by Service */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <h3 className="text-xl font-bold text-gray-900 mb-6">SLA Compliance by Service</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data.by_service}>

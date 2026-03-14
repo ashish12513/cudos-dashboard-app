@@ -71,7 +71,7 @@ export default function BillingTrends() {
         </div>
 
         {/* Monthly Trend with Forecast */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <h3 className="text-xl font-bold text-gray-900 mb-6">📈 Monthly Spend & Forecast</h3>
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart data={data.monthlyTrend}>
@@ -97,7 +97,7 @@ export default function BillingTrends() {
         </div>
 
         {/* Service Growth */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <h3 className="text-xl font-bold text-gray-900 mb-6">🚀 Service Growth Rate (MoM %)</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data.serviceGrowth}>
@@ -111,7 +111,7 @@ export default function BillingTrends() {
         </div>
 
         {/* Cost Anomalies */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <h3 className="text-xl font-bold text-gray-900 mb-6">⚠️ Cost Anomalies Detected</h3>
           <div className="space-y-3">
             {data.anomalies.map((anomaly, idx) => (

@@ -171,32 +171,32 @@ export default function Support() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Total Tickets</p>
             <p className="text-4xl font-bold text-gray-900">{metrics.total_tickets}</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Open Tickets</p>
             <p className="text-4xl font-bold text-orange-600">{metrics.open_tickets}</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">SLA Met</p>
             <p className="text-4xl font-bold text-green-600">{metrics.sla_met}</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">SLA Breached</p>
             <p className="text-4xl font-bold text-red-600">{metrics.sla_breached}</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Avg Response</p>
             <p className="text-4xl font-bold text-[#1B7D3F]">{metrics.avg_response_time_minutes}m</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">Avg Resolution</p>
             <p className="text-4xl font-bold text-[#1B7D3F]">{metrics.avg_resolution_time_hours}h</p>
           </div>
@@ -204,7 +204,7 @@ export default function Support() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">Tickets by Priority</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -218,7 +218,7 @@ export default function Support() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
             <h3 className="text-xl font-bold text-gray-900 mb-6">Tickets by Status</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={statusData}>
@@ -233,7 +233,7 @@ export default function Support() {
         </div>
 
         {/* Ticket List */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-900">Recent Tickets</h3>
             <div className="flex gap-4">
