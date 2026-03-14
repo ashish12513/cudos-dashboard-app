@@ -11,6 +11,10 @@ interface BillingData {
   monthlyTrend: Array<{ month: string; amount: number }>
   serviceBreakdown: Array<{ service: string; cost: number }>
   regionBreakdown: Array<{ region: string; cost: number }>
+  serviceBreakdown3m?: Array<{ service: string; cost: number }>
+  regionBreakdown3m?: Array<{ region: string; cost: number }>
+  serviceBreakdown2m?: Array<{ service: string; cost: number }>
+  regionBreakdown2m?: Array<{ region: string; cost: number }>
   savingsData: {
     riSavings: number
     savingsPlans: number
@@ -128,11 +132,99 @@ export default function Billing() {
                   </div>
                   <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
                     <p className="text-sm font-semibold text-white mb-2">Services</p>
-                    <p className="text-4xl font-bold text-white">{data.totalServicesPreviousMonth}</p>
+                    <p className="text-4xl font-bold text-white">{data.serviceBreakdown3m?.length || 0}</p>
                   </div>
                   <div className="p-6 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl border border-green-300">
-                    <p className="text-sm font-semibold text-white mb-2">Accounts</p>
-                    <p className="text-4xl font-bold text-white">{data.totalAccountsPreviousMonth}</p>
+                    <p className="text-sm font-semibold text-white mb-2">Regions</p>
+                    <p className="text-4xl font-bold text-white">{data.regionBreakdown3m?.length || 0}</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Service Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie data={data.serviceBreakdown3m || []} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${formatCurrency(value as number)}`} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
+                        {(data.serviceBreakdown3m || []).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Region Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data.regionBreakdown3m || []}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="region" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      <Bar dataKey="cost" fill="#1B7D3F" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+
+            {card === 'invoice2m' && (
+              <>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
+                    <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Services</p>
+                    <p className="text-4xl font-bold text-white">{data.serviceBreakdown2m?.length || 0}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Regions</p>
+                    <p className="text-4xl font-bold text-white">{data.regionBreakdown2m?.length || 0}</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Service Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie data={data.serviceBreakdown2m || []} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${formatCurrency(value as number)}`} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
+                        {(data.serviceBreakdown2m || []).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Region Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data.regionBreakdown2m || []}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="region" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      <Bar dataKey="cost" fill="#1B7D3F" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+
+            {card === 'invoice1m' && (
+              <>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
+                    <p className="text-4xl font-bold text-white">{formatCurrency(data.invoicePreviousMonth)}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Services</p>
+                    <p className="text-4xl font-bold text-white">{data.serviceBreakdown?.length || 0}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Regions</p>
+                    <p className="text-4xl font-bold text-white">{data.regionBreakdown?.length || 0}</p>
                   </div>
                 </div>
                 <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
@@ -147,36 +239,6 @@ export default function Billing() {
                       <Tooltip formatter={(value) => formatCurrency(value as number)} />
                     </PieChart>
                   </ResponsiveContainer>
-                </div>
-              </>
-            )}
-
-            {card === 'invoice2m' && (
-              <>
-                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
-                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
-                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
-                </div>
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                  <p className="text-lg font-bold text-gray-900 mb-4">Monthly Trend</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.monthlyTrend}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                      <Line type="monotone" dataKey="amount" stroke="#1B7D3F" strokeWidth={3} dot={{ fill: '#1B7D3F', r: 6 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </>
-            )}
-
-            {card === 'invoice1m' && (
-              <>
-                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
-                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
-                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoicePreviousMonth)}</p>
                 </div>
                 <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
                   <p className="text-lg font-bold text-gray-900 mb-4">Region Breakdown</p>

@@ -49,26 +49,26 @@ export default function MultiSelectDropdown({
       
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-left flex justify-between items-center hover:border-[#1B7D3F] focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] transition-all"
+        className="w-full px-4 py-2 border-2 border-[#1B7D3F] rounded-lg bg-gradient-to-r from-[#1B7D3F]/5 to-[#2BA84F]/5 text-gray-900 text-left flex justify-between items-center hover:border-[#155E31] hover:from-[#1B7D3F]/10 hover:to-[#2BA84F]/10 focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] transition-all"
       >
-        <span className="text-sm">
+        <span className="text-sm font-medium text-gray-900">
           {selected.length === 0 
             ? 'Select...' 
             : selected.length === 1 
             ? selected[0] 
             : `${selected.length} selected`}
         </span>
-        <span className={`text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+        <span className={`text-[#1B7D3F] transition-transform font-bold ${isOpen ? 'rotate-180' : ''}`}>
           ▼
         </span>
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50">
-          <div className="p-2 border-b border-gray-200">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 border-[#1B7D3F] rounded-lg shadow-xl z-50">
+          <div className="p-2 border-b-2 border-[#1B7D3F]/20 bg-gradient-to-r from-[#1B7D3F]/5 to-[#2BA84F]/5">
             <button
               onClick={handleSelectAll}
-              className="w-full px-3 py-2 text-sm text-left hover:bg-[#1B7D3F]/10 rounded transition-colors font-semibold text-[#1B7D3F]"
+              className="w-full px-3 py-2 text-sm text-left hover:bg-[#1B7D3F]/20 rounded transition-colors font-bold text-[#1B7D3F]"
             >
               {selected.length === options.length ? '✓ Deselect All' : '✓ Select All'}
             </button>
@@ -78,15 +78,18 @@ export default function MultiSelectDropdown({
             {options.map((option) => (
               <label
                 key={option}
-                className="flex items-center px-4 py-2 hover:bg-[#1B7D3F]/5 cursor-pointer transition-colors"
+                className="flex items-center px-4 py-3 hover:bg-gradient-to-r hover:from-[#1B7D3F]/10 hover:to-[#2BA84F]/10 cursor-pointer transition-colors border-b border-[#1B7D3F]/10 last:border-b-0"
               >
                 <input
                   type="checkbox"
                   checked={selected.includes(option)}
                   onChange={() => handleToggle(option)}
-                  className="w-4 h-4 text-[#1B7D3F] border-gray-300 rounded focus:ring-[#1B7D3F] cursor-pointer"
+                  className="w-4 h-4 text-[#1B7D3F] border-[#1B7D3F] rounded focus:ring-[#1B7D3F] cursor-pointer accent-[#1B7D3F]"
                 />
-                <span className="ml-3 text-sm text-gray-700">{option}</span>
+                <span className="ml-3 text-sm font-medium text-gray-800">{option}</span>
+                {selected.includes(option) && (
+                  <span className="ml-auto text-[#1B7D3F] font-bold">✓</span>
+                )}
               </label>
             ))}
           </div>

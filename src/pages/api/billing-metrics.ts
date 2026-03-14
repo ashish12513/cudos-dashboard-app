@@ -58,6 +58,70 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Metrics: ['BlendedCost']
     }
 
+    // Get service breakdown for 3 months ago
+    const serviceParams3m: any = {
+      TimePeriod: {
+        Start: formatDate(threeMonthsAgo),
+        End: formatDate(new Date(currentYear, currentMonth - 2, 0))
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['BlendedCost'],
+      GroupBy: [
+        {
+          Type: 'DIMENSION',
+          Key: 'SERVICE'
+        }
+      ]
+    }
+
+    // Get region breakdown for 3 months ago
+    const regionParams3m: any = {
+      TimePeriod: {
+        Start: formatDate(threeMonthsAgo),
+        End: formatDate(new Date(currentYear, currentMonth - 2, 0))
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['BlendedCost'],
+      GroupBy: [
+        {
+          Type: 'DIMENSION',
+          Key: 'REGION'
+        }
+      ]
+    }
+
+    // Get service breakdown for 2 months ago
+    const serviceParams2m: any = {
+      TimePeriod: {
+        Start: formatDate(twoMonthsAgo),
+        End: formatDate(new Date(currentYear, currentMonth - 1, 0))
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['BlendedCost'],
+      GroupBy: [
+        {
+          Type: 'DIMENSION',
+          Key: 'SERVICE'
+        }
+      ]
+    }
+
+    // Get region breakdown for 2 months ago
+    const regionParams2m: any = {
+      TimePeriod: {
+        Start: formatDate(twoMonthsAgo),
+        End: formatDate(new Date(currentYear, currentMonth - 1, 0))
+      },
+      Granularity: 'MONTHLY',
+      Metrics: ['BlendedCost'],
+      GroupBy: [
+        {
+          Type: 'DIMENSION',
+          Key: 'REGION'
+        }
+      ]
+    }
+
     // Get service breakdown for previous month
     const serviceParams: any = {
       TimePeriod: {
@@ -100,10 +164,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Metrics: ['BlendedCost']
     }
 
-    const [invoice3m, invoice2m, invoice1m, serviceData, regionData, trendData] = await Promise.all([
+    const [invoice3m, invoice2m, invoice1m, serviceData3m, regionData3m, serviceData2m, regionData2m, serviceData, regionData, trendData] = await Promise.all([
       costExplorer.getCostAndUsage(invoice3mParams).promise(),
       costExplorer.getCostAndUsage(invoice2mParams).promise(),
       costExplorer.getCostAndUsage(invoice1mParams).promise(),
+      costExplorer.getCostAndUsage(serviceParams3m).promise(),
+      costExplorer.getCostAndUsage(regionParams3m).promise(),
+      costExplorer.getCostAndUsage(serviceParams2m).promise(),
+      costExplorer.getCostAndUsage(regionParams2m).promise(),
       costExplorer.getCostAndUsage(serviceParams).promise(),
       costExplorer.getCostAndUsage(regionParams).promise(),
       costExplorer.getCostAndUsage(trendParams).promise()
@@ -114,7 +182,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const invoiceTwoMonthsAgo = parseFloat(invoice2m.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0')
     const invoicePreviousMonth = parseFloat(invoice1m.ResultsByTime?.[0]?.Total?.BlendedCost?.Amount || '0')
 
-    // Extract service breakdown
+    // Extract service breakdown for 3 months ago
+    const serviceBreakdown3m = serviceData3m.ResultsByTime?.[0]?.Groups
+      ?.map(group => ({
+        service: group.Keys?.[0]?.replace('Amazon ', '').replace(' - Compute', '') || 'Other',
+        cost: Math.round(parseFloat(group.Metrics?.BlendedCost?.Amount || '0') * 100) / 100
+      }))
+      .filter(s => s.cost > 0)
+      .sort((a, b) => b.cost - a.cost)
+      .slice(0, 5) || []
+
+    // Extract region breakdown for 3 months ago
+    const regionBreakdown3m = regionData3m.ResultsByTime?.[0]?.Groups
+      ?.map(group => ({
+        region: group.Keys?.[0] || 'Other',
+        cost: Math.round(parseFloat(group.Metrics?.BlendedCost?.Amount || '0') * 100) / 100
+      }))
+      .filter(r => r.cost > 0)
+      .sort((a, b) => b.cost - a.cost)
+      .slice(0, 5) || []
+
+    // Extract service breakdown for 2 months ago
+    const serviceBreakdown2m = serviceData2m.ResultsByTime?.[0]?.Groups
+      ?.map(group => ({
+        service: group.Keys?.[0]?.replace('Amazon ', '').replace(' - Compute', '') || 'Other',
+        cost: Math.round(parseFloat(group.Metrics?.BlendedCost?.Amount || '0') * 100) / 100
+      }))
+      .filter(s => s.cost > 0)
+      .sort((a, b) => b.cost - a.cost)
+      .slice(0, 5) || []
+
+    // Extract region breakdown for 2 months ago
+    const regionBreakdown2m = regionData2m.ResultsByTime?.[0]?.Groups
+      ?.map(group => ({
+        region: group.Keys?.[0] || 'Other',
+        cost: Math.round(parseFloat(group.Metrics?.BlendedCost?.Amount || '0') * 100) / 100
+      }))
+      .filter(r => r.cost > 0)
+      .sort((a, b) => b.cost - a.cost)
+      .slice(0, 5) || []
+
+    // Extract service breakdown for previous month
     const serviceBreakdown = serviceData.ResultsByTime?.[0]?.Groups
       ?.map(group => ({
         service: group.Keys?.[0]?.replace('Amazon ', '').replace(' - Compute', '') || 'Other',
@@ -124,7 +232,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .sort((a, b) => b.cost - a.cost)
       .slice(0, 5) || []
 
-    // Extract region breakdown
+    // Extract region breakdown for previous month
     const regionBreakdown = regionData.ResultsByTime?.[0]?.Groups
       ?.map(group => ({
         region: group.Keys?.[0] || 'Other',
@@ -164,6 +272,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         monthlyTrend,
         serviceBreakdown,
         regionBreakdown,
+        serviceBreakdown3m,
+        regionBreakdown3m,
+        serviceBreakdown2m,
+        regionBreakdown2m,
         savingsData,
         amortizedSpend: monthlyTrend
       }
