@@ -25,7 +25,7 @@ export default function Billing() {
   const [data, setData] = useState<BillingData | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
-  const [filterType, setFilterType] = useState<'all' | 'service' | 'region'>('all')
+  const [activeTab, setActiveTab] = useState<'invoices' | 'savings' | 'amortized'>('invoices')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -264,13 +264,13 @@ export default function Billing() {
         {/* Filters */}
         <div className="flex gap-4">
           <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value as 'all' | 'service' | 'region')}
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value as 'invoices' | 'savings' | 'amortized')}
             className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B7D3F]"
           >
-            <option value="all">All Services</option>
-            <option value="service">By Service</option>
-            <option value="region">By Region</option>
+            <option value="invoices">Invoice History</option>
+            <option value="savings">Savings & Discounts</option>
+            <option value="amortized">Amortized Spend</option>
           </select>
         </div>
 

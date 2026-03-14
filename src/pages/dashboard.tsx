@@ -1,5 +1,6 @@
 import Layout from '../components/Layout'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
 
 interface DashboardData {
@@ -23,11 +24,83 @@ interface DashboardData {
   anomalies: Array<{ date: string; amount: number; reason: string }>
 }
 
+interface Filters {
+  payerAccounts: string[]
+  accountNames: string[]
+  linkedAccountIds: string[]
+  chargeType: string[]
+  regions: string[]
+}
+
 export default function Dashboard() {
+  const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'billing' | 'risp' | 'trends'>('billing')
+  const [filters, setFilters] = useState<Filters>({
+    payerAccounts: [],
+    accountNames: [],
+    linkedAccountIds: [],
+    chargeType: [],
+    regions: []
+  })
+
+  // Filter options
+  const filterOptions = {
+    payerAccounts: ['123456789012', '210987654321', '345678901234'],
+    accountNames: ['Production', 'Development', 'Staging', 'Testing'],
+    linkedAccountIds: ['acc-001', 'acc-002', 'acc-003', 'acc-004'],
+    chargeType: ['Usage', 'Tax', 'Support', 'Refund'],
+    regions: ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-south-1', 'ap-southeast-1']
+  }
+
+  // Load filters from URL
+  useEffect(() => {
+    if (router.isReady) {
+      const queryFilters: Filters = {
+        payerAccounts: router.query.payerAccounts ? (Array.isArray(router.query.payerAccounts) ? router.query.payerAccounts : [router.query.payerAccounts as string]) : [],
+        accountNames: router.query.accountNames ? (Array.isArray(router.query.accountNames) ? router.query.accountNames : [router.query.accountNames as string]) : [],
+        linkedAccountIds: router.query.linkedAccountIds ? (Array.isArray(router.query.linkedAccountIds) ? router.query.linkedAccountIds : [router.query.linkedAccountIds as string]) : [],
+        chargeType: router.query.chargeType ? (Array.isArray(router.query.chargeType) ? router.query.chargeType : [router.query.chargeType as string]) : [],
+        regions: router.query.regions ? (Array.isArray(router.query.regions) ? router.query.regions : [router.query.regions as string]) : []
+      }
+      setFilters(queryFilters)
+    }
+  }, [router.isReady, router.query])
+
+  // Update filters and URL
+  const updateFilters = (filterKey: keyof Filters, value: string) => {
+    setFilters(prev => {
+      const updated = { ...prev }
+      if (updated[filterKey].includes(value)) {
+        updated[filterKey] = updated[filterKey].filter(item => item !== value)
+      } else {
+        updated[filterKey] = [...updated[filterKey], value]
+      }
+      
+      const query: any = {}
+      Object.entries(updated).forEach(([key, values]) => {
+        if (values.length > 0) {
+          query[key] = values.length === 1 ? values[0] : values
+        }
+      })
+      router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+      return updated
+    })
+  }
+
+  // Reset all filters
+  const resetFilters = () => {
+    setFilters({
+      payerAccounts: [],
+      accountNames: [],
+      linkedAccountIds: [],
+      chargeType: [],
+      regions: []
+    })
+    router.push(router.pathname, undefined, { shallow: true })
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -259,6 +332,125 @@ export default function Dashboard() {
         <div>
           <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#155E31] bg-clip-text text-transparent">Cloud Financial Command Center</h1>
           <p className="text-gray-600 text-lg font-medium mt-2">Comprehensive cloud cost analytics and billing insights</p>
+        </div>
+
+        {/* Filter Controls */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-900">🔍 Filters & Controls</h3>
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all font-semibold text-sm"
+            >
+              ↻ Reset Filters
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {/* Payer Accounts */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {filterOptions.payerAccounts.map(account => (
+                  <label key={account} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.payerAccounts.includes(account)}
+                      onChange={() => updateFilters('payerAccounts', account)}
+                      className="w-4 h-4 text-[#1B7D3F] rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{account}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Account Names */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {filterOptions.accountNames.map(name => (
+                  <label key={name} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.accountNames.includes(name)}
+                      onChange={() => updateFilters('accountNames', name)}
+                      className="w-4 h-4 text-[#1B7D3F] rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Linked Account IDs */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {filterOptions.linkedAccountIds.map(id => (
+                  <label key={id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.linkedAccountIds.includes(id)}
+                      onChange={() => updateFilters('linkedAccountIds', id)}
+                      className="w-4 h-4 text-[#1B7D3F] rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{id}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Charge Type */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {filterOptions.chargeType.map(type => (
+                  <label key={type} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.chargeType.includes(type)}
+                      onChange={() => updateFilters('chargeType', type)}
+                      className="w-4 h-4 text-[#1B7D3F] rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Regions */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {filterOptions.regions.map(region => (
+                  <label key={region} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.regions.includes(region)}
+                      onChange={() => updateFilters('regions', region)}
+                      className="w-4 h-4 text-[#1B7D3F] rounded"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{region}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Active Filters Display */}
+          {(filters.payerAccounts.length > 0 || filters.accountNames.length > 0 || filters.linkedAccountIds.length > 0 || filters.chargeType.length > 0 || filters.regions.length > 0) && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <p className="text-sm font-semibold text-gray-700 mb-2">Active Filters:</p>
+              <div className="flex flex-wrap gap-2">
+                {filters.payerAccounts.map(acc => <span key={acc} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Payer: {acc}</span>)}
+                {filters.accountNames.map(name => <span key={name} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Account: {name}</span>)}
+                {filters.linkedAccountIds.map(id => <span key={id} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">ID: {id}</span>)}
+                {filters.chargeType.map(type => <span key={type} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Type: {type}</span>)}
+                {filters.regions.map(region => <span key={region} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Region: {region}</span>)}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Tab Navigation */}
