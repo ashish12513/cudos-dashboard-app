@@ -44,6 +44,13 @@ export default function Dashboard() {
   const [filterType, setFilterType] = useState<'service' | 'region' | 'all'>('all')
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [showDetailView, setShowDetailView] = useState(false)
+  
+  // Filter states
+  const [selectedPayerAccounts, setSelectedPayerAccounts] = useState<string[]>([])
+  const [selectedAccountNames, setSelectedAccountNames] = useState<string[]>([])
+  const [selectedLinkedAccountIds, setSelectedLinkedAccountIds] = useState<string[]>([])
+  const [selectedChargeTypes, setSelectedChargeTypes] = useState<string[]>([])
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([])
 
   const fetchAllData = async (accountId?: string) => {
     try {
@@ -168,6 +175,50 @@ export default function Dashboard() {
   const formatPercentage = (value: number) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
   }
+
+  const handleFilterChange = (filterType: string, value: string, isMultiSelect: boolean = false) => {
+    if (isMultiSelect) {
+      switch (filterType) {
+        case 'payerAccounts':
+          setSelectedPayerAccounts(prev => 
+            prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+          )
+          break
+        case 'accountNames':
+          setSelectedAccountNames(prev => 
+            prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+          )
+          break
+        case 'linkedAccountIds':
+          setSelectedLinkedAccountIds(prev => 
+            prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+          )
+          break
+        case 'chargeTypes':
+          setSelectedChargeTypes(prev => 
+            prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+          )
+          break
+        case 'regions':
+          setSelectedRegions(prev => 
+            prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
+          )
+          break
+      }
+    }
+  }
+
+  const resetFilters = () => {
+    setSelectedPayerAccounts([])
+    setSelectedAccountNames([])
+    setSelectedLinkedAccountIds([])
+    setSelectedChargeTypes([])
+    setSelectedRegions([])
+  }
+
+  const hasActiveFilters = selectedPayerAccounts.length > 0 || selectedAccountNames.length > 0 || 
+                           selectedLinkedAccountIds.length > 0 || selectedChargeTypes.length > 0 || 
+                           selectedRegions.length > 0
 
   const CardDetailsModal = ({ card, onClose }: { card: string | null; onClose: () => void }) => {
     if (!card || !data) return null
@@ -576,63 +627,147 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
         <div className="bg-gradient-to-br from-[#1B7D3F]/5 to-[#2BA84F]/5 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-900">🔍 Filters & Controls</h3>
-            <button className="px-4 py-2 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-lg hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold text-sm">
+            <button 
+              onClick={resetFilters}
+              disabled={!hasActiveFilters}
+              className={`px-4 py-2 rounded-lg transition-all font-semibold text-sm ${
+                hasActiveFilters 
+                  ? 'bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white hover:from-[#155E31] hover:to-[#0F5C2E]' 
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
               ↻ Reset Filters
             </button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
-                <option>Select...</option>
-                <option>123456789012</option>
-                <option>210987654321</option>
-                <option>345678901234</option>
+              <select 
+                multiple
+                value={selectedPayerAccounts}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value)
+                  setSelectedPayerAccounts(selected)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
+              >
+                <option value="123456789012">123456789012</option>
+                <option value="210987654321">210987654321</option>
+                <option value="345678901234">345678901234</option>
               </select>
+              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
-                <option>Select...</option>
-                <option>Production</option>
-                <option>Development</option>
-                <option>Staging</option>
-                <option>Testing</option>
+              <select 
+                multiple
+                value={selectedAccountNames}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value)
+                  setSelectedAccountNames(selected)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
+              >
+                <option value="Production">Production</option>
+                <option value="Development">Development</option>
+                <option value="Staging">Staging</option>
+                <option value="Testing">Testing</option>
               </select>
+              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
-                <option>Select...</option>
-                <option>acc-001</option>
-                <option>acc-002</option>
-                <option>acc-003</option>
-                <option>acc-004</option>
+              <select 
+                multiple
+                value={selectedLinkedAccountIds}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value)
+                  setSelectedLinkedAccountIds(selected)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
+              >
+                <option value="acc-001">acc-001</option>
+                <option value="acc-002">acc-002</option>
+                <option value="acc-003">acc-003</option>
+                <option value="acc-004">acc-004</option>
               </select>
+              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
-                <option>Select...</option>
-                <option>Usage</option>
-                <option>Tax</option>
-                <option>Support</option>
-                <option>Refund</option>
+              <select 
+                multiple
+                value={selectedChargeTypes}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value)
+                  setSelectedChargeTypes(selected)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
+              >
+                <option value="Usage">Usage</option>
+                <option value="Tax">Tax</option>
+                <option value="Support">Support</option>
+                <option value="Refund">Refund</option>
               </select>
+              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
             </div>
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
-                <option>Select...</option>
-                <option>us-east-1</option>
-                <option>us-west-2</option>
-                <option>eu-west-1</option>
-                <option>ap-south-1</option>
-                <option>ap-southeast-1</option>
+              <select 
+                multiple
+                value={selectedRegions}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions, option => option.value)
+                  setSelectedRegions(selected)
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
+              >
+                <option value="us-east-1">us-east-1</option>
+                <option value="us-west-2">us-west-2</option>
+                <option value="eu-west-1">eu-west-1</option>
+                <option value="ap-south-1">ap-south-1</option>
+                <option value="ap-southeast-1">ap-southeast-1</option>
               </select>
+              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
             </div>
           </div>
+
+          {/* Active Filters Display */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1B7D3F]/20">
+              {selectedPayerAccounts.map(acc => (
+                <span key={`payer-${acc}`} className="px-3 py-1 bg-[#1B7D3F] text-white text-xs rounded-full flex items-center gap-2">
+                  {acc}
+                  <button onClick={() => setSelectedPayerAccounts(prev => prev.filter(v => v !== acc))} className="hover:text-red-200">✕</button>
+                </span>
+              ))}
+              {selectedAccountNames.map(acc => (
+                <span key={`name-${acc}`} className="px-3 py-1 bg-[#2BA84F] text-white text-xs rounded-full flex items-center gap-2">
+                  {acc}
+                  <button onClick={() => setSelectedAccountNames(prev => prev.filter(v => v !== acc))} className="hover:text-red-200">✕</button>
+                </span>
+              ))}
+              {selectedLinkedAccountIds.map(acc => (
+                <span key={`linked-${acc}`} className="px-3 py-1 bg-[#155E31] text-white text-xs rounded-full flex items-center gap-2">
+                  {acc}
+                  <button onClick={() => setSelectedLinkedAccountIds(prev => prev.filter(v => v !== acc))} className="hover:text-red-200">✕</button>
+                </span>
+              ))}
+              {selectedChargeTypes.map(type => (
+                <span key={`charge-${type}`} className="px-3 py-1 bg-[#1B7D3F] text-white text-xs rounded-full flex items-center gap-2">
+                  {type}
+                  <button onClick={() => setSelectedChargeTypes(prev => prev.filter(v => v !== type))} className="hover:text-red-200">✕</button>
+                </span>
+              ))}
+              {selectedRegions.map(region => (
+                <span key={`region-${region}`} className="px-3 py-1 bg-[#2BA84F] text-white text-xs rounded-full flex items-center gap-2">
+                  {region}
+                  <button onClick={() => setSelectedRegions(prev => prev.filter(v => v !== region))} className="hover:text-red-200">✕</button>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Cost Overview Cards */}
@@ -641,11 +776,11 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div 
               onClick={() => setExpandedCard('totalSpent')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl flex items-center justify-center text-white text-xl shadow-md">
                     💵
                   </div>
                 </div>
@@ -661,12 +796,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('monthlyGrowth')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.cost.monthlyGrowth >= 0 ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                    data && data.cost.monthlyGrowth >= 0 ? 'bg-gradient-to-br from-red-500 to-red-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
                   }`}>
                     📈
                   </div>
@@ -674,7 +809,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 <div className="ml-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Monthly Growth</p>
                   <p className={`text-3xl font-bold leading-tight ${
-                    data && data.cost.monthlyGrowth >= 0 ? 'text-red-600' : 'text-green-600'
+                    data && data.cost.monthlyGrowth >= 0 ? 'text-red-600' : 'text-[#1B7D3F]'
                   }`}>
                     {data ? formatPercentage(data.cost.monthlyGrowth) : '0%'}
                   </p>
@@ -685,13 +820,13 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('budgetUsed')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.cost.budgetUsed > 80 ? 'bg-gradient-to-br from-red-400 to-red-500' : 
-                    data && data.cost.budgetUsed > 60 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                    data && data.cost.budgetUsed > 80 ? 'bg-gradient-to-br from-red-500 to-red-600' : 
+                    data && data.cost.budgetUsed > 60 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
                   }`}>
                     🎯
                   </div>
@@ -700,7 +835,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Budget Used</p>
                   <p className={`text-3xl font-bold leading-tight ${
                     data && data.cost.budgetUsed > 80 ? 'text-red-600' : 
-                    data && data.cost.budgetUsed > 60 ? 'text-yellow-600' : 'text-green-600'
+                    data && data.cost.budgetUsed > 60 ? 'text-yellow-600' : 'text-[#1B7D3F]'
                   }`}>
                     {data?.cost.budgetUsed || 0}%
                   </p>
@@ -711,11 +846,11 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('nextMonth')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-gray-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-xl flex items-center justify-center text-white text-xl shadow-md">
                     🔮
                   </div>
                 </div>
@@ -737,11 +872,11 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div 
               onClick={() => setExpandedCard('ec2')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl flex items-center justify-center text-white text-xl shadow-md">
                     🖥️
                   </div>
                 </div>
@@ -757,11 +892,11 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('lambda')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-xl flex items-center justify-center text-white text-xl shadow-md">
                     ⚡
                   </div>
                 </div>
@@ -777,11 +912,11 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('storage')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-xl flex items-center justify-center text-white text-xl shadow-md">
                     💾
                   </div>
                 </div>
@@ -797,13 +932,13 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('storage')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.usage.avgUtilization > 80 ? 'bg-gradient-to-br from-red-400 to-red-500' : 
-                    data && data.usage.avgUtilization > 60 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                    data && data.usage.avgUtilization > 80 ? 'bg-gradient-to-br from-red-500 to-red-600' : 
+                    data && data.usage.avgUtilization > 60 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
                   }`}>
                     📊
                   </div>
@@ -812,7 +947,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Avg Utilization</p>
                   <p className={`text-3xl font-bold leading-tight ${
                     data && data.usage.avgUtilization > 80 ? 'text-red-600' : 
-                    data && data.usage.avgUtilization > 60 ? 'text-yellow-600' : 'text-green-600'
+                    data && data.usage.avgUtilization > 60 ? 'text-yellow-600' : 'text-[#1B7D3F]'
                   }`}>
                     {data?.usage.avgUtilization || 0}%
                   </p>
@@ -829,12 +964,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div 
               onClick={() => setExpandedCard('security')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.security.securityScore > 80 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                    data && data.security.securityScore > 80 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 'bg-gradient-to-br from-yellow-500 to-yellow-600'
                   }`}>
                     🛡️
                   </div>
@@ -842,7 +977,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 <div className="ml-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Security Score</p>
                   <p className={`text-3xl font-bold leading-tight ${
-                    data && data.security.securityScore > 80 ? 'text-green-600' : 'text-yellow-600'
+                    data && data.security.securityScore > 80 ? 'text-[#1B7D3F]' : 'text-yellow-600'
                   }`}>
                     {data?.security.securityScore || 0}%
                   </p>
@@ -853,12 +988,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('security')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.security.complianceScore > 90 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                    data && data.security.complianceScore > 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 'bg-gradient-to-br from-yellow-500 to-yellow-600'
                   }`}>
                     ✅
                   </div>
@@ -866,7 +1001,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 <div className="ml-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Compliance</p>
                   <p className={`text-3xl font-bold leading-tight ${
-                    data && data.security.complianceScore > 90 ? 'text-green-600' : 'text-yellow-600'
+                    data && data.security.complianceScore > 90 ? 'text-[#1B7D3F]' : 'text-yellow-600'
                   }`}>
                     {data?.security.complianceScore || 0}%
                   </p>
@@ -877,12 +1012,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('security')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.security.criticalFindings > 0 ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                    data && data.security.criticalFindings > 0 ? 'bg-gradient-to-br from-red-500 to-red-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
                   }`}>
                     🚨
                   </div>
@@ -890,7 +1025,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 <div className="ml-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Critical Issues</p>
                   <p className={`text-3xl font-bold leading-tight ${
-                    data && data.security.criticalFindings > 0 ? 'text-red-600' : 'text-green-600'
+                    data && data.security.criticalFindings > 0 ? 'text-red-600' : 'text-[#1B7D3F]'
                   }`}>
                     {data?.security.criticalFindings || 0}
                   </p>
@@ -901,12 +1036,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
             <div 
               onClick={() => setExpandedCard('security')}
-              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20"
             >
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                    data && data.security.mfaPercentage > 80 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-red-400 to-red-500'
+                    data && data.security.mfaPercentage > 80 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 'bg-gradient-to-br from-red-500 to-red-600'
                   }`}>
                     🔐
                   </div>
@@ -914,7 +1049,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 <div className="ml-4">
                   <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">MFA Enabled</p>
                   <p className={`text-3xl font-bold leading-tight ${
-                    data && data.security.mfaPercentage > 80 ? 'text-green-600' : 'text-red-600'
+                    data && data.security.mfaPercentage > 80 ? 'text-[#1B7D3F]' : 'text-red-600'
                   }`}>
                     {data?.security.mfaPercentage || 0}%
                   </p>
@@ -929,12 +1064,12 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
         {data && data.cost.topServices.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-gray-800 mb-4">💸 Top Services by Cost</h2>
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
               <div className="space-y-4">
                 {data.cost.topServices.map((service, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center text-white text-sm font-bold mr-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg flex items-center justify-center text-white text-sm font-bold mr-3">
                         {index + 1}
                       </div>
                       <span className="text-sm font-semibold text-gray-800">{service.service}</span>
@@ -945,7 +1080,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                       </span>
                       <div className="w-20 bg-gray-200 rounded-full h-3">
                         <div 
-                          className="bg-gradient-to-r from-gray-400 to-gray-500 h-3 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-[#1B7D3F] to-[#2BA84F] h-3 rounded-full transition-all duration-500"
                           style={{ width: `${(service.cost / (data.cost.topServices[0]?.cost || 1)) * 100}%` }}
                         ></div>
                       </div>
@@ -961,13 +1096,13 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">📈 Performance Metrics</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Growth Trends</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Monthly</span>
                   <span className={`text-sm font-semibold ${
-                    data && data.trends.monthlyGrowth >= 0 ? 'text-red-600' : 'text-green-600'
+                    data && data.trends.monthlyGrowth >= 0 ? 'text-red-600' : 'text-[#1B7D3F]'
                   }`}>
                     {data ? formatPercentage(data.trends.monthlyGrowth) : '0%'}
                   </span>
@@ -987,7 +1122,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Efficiency Score</h3>
               <div className="flex items-center justify-center">
                 <div className="relative w-24 h-24">
@@ -1001,7 +1136,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                     <path
                       d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       fill="none"
-                      stroke="#6b7280"
+                      stroke="#1B7D3F"
                       strokeWidth="2"
                       strokeDasharray={`${data?.trends.efficiencyScore || 0}, 100`}
                     />
@@ -1015,7 +1150,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+            <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">Quick Stats</h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
