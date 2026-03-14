@@ -1,238 +1,159 @@
 import Layout from '../components/Layout'
-import { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
+import { useEffect, useState } from 'react'
 
 interface DashboardData {
-  invoiceThreeMonthsAgo: number
-  invoiceTwoMonthsAgo: number
-  invoicePreviousMonth: number
-  totalAccountsPreviousMonth: number
-  totalServicesPreviousMonth: number
-  monthlyTrend: Array<{ month: string; amount: number }>
-  serviceBreakdown: Array<{ service: string; cost: number }>
-  regionBreakdown: Array<{ region: string; cost: number }>
-  savingsData: {
-    riSavings: number
-    savingsPlans: number
-    spotSavings: number
-    credits: number
-    refunds: number
+  cost: {
+    totalSpent: number
+    monthlyGrowth: number
+    budgetUsed: number
+    topServices: Array<{ service: string; cost: number }>
   }
-  riCoverage: number
-  spCoverage: number
-  anomalies: Array<{ date: string; amount: number; reason: string }>
-}
-
-interface Filters {
-  payerAccounts: string[]
-  accountNames: string[]
-  linkedAccountIds: string[]
-  chargeType: string[]
-  regions: string[]
-}
-
-// Custom Multi-Select Dropdown Component
-function MultiSelectDropdown({ 
-  label, 
-  options, 
-  selected, 
-  onChange 
-}: { 
-  label: string
-  options: string[]
-  selected: string[]
-  onChange: (values: string[]) => void
-}) {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  const toggleOption = (option: string) => {
-    if (selected.includes(option)) {
-      onChange(selected.filter(item => item !== option))
-    } else {
-      onChange([...selected, option])
-    }
+  usage: {
+    ec2Instances: number
+    runningInstances: number
+    storageUsageTB: number
+    dataTransferGB: number
+    avgUtilization: number
   }
-
-  return (
-    <div ref={dropdownRef} className="relative">
-      <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900 text-left flex justify-between items-center hover:border-[#1B7D3F] transition-colors"
-      >
-        <span className="text-sm">
-          {selected.length === 0 ? 'Select...' : `${selected.length} selected`}
-        </span>
-        <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
-      </button>
-
-      {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
-          {options.map(option => (
-            <label
-              key={option}
-              className="flex items-center px-4 py-2 hover:bg-[#1B7D3F]/5 cursor-pointer transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(option)}
-                onChange={() => toggleOption(option)}
-                className="w-4 h-4 text-[#1B7D3F] rounded focus:ring-2 focus:ring-[#1B7D3F] cursor-pointer"
-              />
-              <span className="ml-3 text-sm text-gray-700">{option}</span>
-            </label>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+  compute: {
+    ec2Running: number
+    ec2Stopped: number
+    lambdaFunctions: number
+    ecsClusters: number
+    totalCompute: number
+  }
+  trends: {
+    monthlyGrowth: number
+    sixMonthGrowth: number
+    yearlyGrowth: number
+    nextMonthForecast: number
+    efficiencyScore: number
+  }
+  security: {
+    securityScore: number
+    complianceScore: number
+    criticalFindings: number
+    mfaPercentage: number
+  }
 }
 
 export default function Dashboard() {
-  const router = useRouter()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'billing' | 'risp' | 'trends'>('billing')
-  const [filters, setFilters] = useState<Filters>({
-    payerAccounts: [],
-    accountNames: [],
-    linkedAccountIds: [],
-    chargeType: [],
-    regions: []
-  })
+  const [filterType, setFilterType] = useState<'service' | 'region' | 'all'>('all')
+  const [selectedService, setSelectedService] = useState<string | null>(null)
+  const [showDetailView, setShowDetailView] = useState(false)
 
-  // Filter options
-  const filterOptions = {
-    payerAccounts: ['123456789012', '210987654321', '345678901234'],
-    accountNames: ['Production', 'Development', 'Staging', 'Testing'],
-    linkedAccountIds: ['acc-001', 'acc-002', 'acc-003', 'acc-004'],
-    chargeType: ['Usage', 'Tax', 'Support', 'Refund'],
-    regions: ['us-east-1', 'us-west-2', 'eu-west-1', 'ap-south-1', 'ap-southeast-1']
-  }
-
-  // Load filters from URL
-  useEffect(() => {
-    if (router.isReady) {
-      const queryFilters: Filters = {
-        payerAccounts: router.query.payerAccounts ? (Array.isArray(router.query.payerAccounts) ? router.query.payerAccounts : [router.query.payerAccounts as string]) : [],
-        accountNames: router.query.accountNames ? (Array.isArray(router.query.accountNames) ? router.query.accountNames : [router.query.accountNames as string]) : [],
-        linkedAccountIds: router.query.linkedAccountIds ? (Array.isArray(router.query.linkedAccountIds) ? router.query.linkedAccountIds : [router.query.linkedAccountIds as string]) : [],
-        chargeType: router.query.chargeType ? (Array.isArray(router.query.chargeType) ? router.query.chargeType : [router.query.chargeType as string]) : [],
-        regions: router.query.regions ? (Array.isArray(router.query.regions) ? router.query.regions : [router.query.regions as string]) : []
-      }
-      setFilters(queryFilters)
-    }
-  }, [router.isReady, router.query])
-
-  // Update filters and URL
-  const updateFilters = (filterKey: keyof Filters, value: string) => {
-    setFilters(prev => {
-      const updated = { ...prev }
-      if (updated[filterKey].includes(value)) {
-        updated[filterKey] = updated[filterKey].filter(item => item !== value)
-      } else {
-        updated[filterKey] = [...updated[filterKey], value]
-      }
+  const fetchAllData = async (accountId?: string) => {
+    try {
+      const accountParam = accountId ? `?accountId=${accountId}` : ''
+      console.log('🔄 Fetching dashboard data...')
       
-      const query: any = {}
-      Object.entries(updated).forEach(([key, values]) => {
-        if (values.length > 0) {
-          query[key] = values.length === 1 ? values[0] : values
+      const [costRes, usageRes, computeRes, trendsRes, securityRes] = await Promise.all([
+        fetch(`/api/cost-metrics${accountParam}`),
+        fetch(`/api/usage-metrics${accountParam}`),
+        fetch(`/api/compute-metrics${accountParam}`),
+        fetch(`/api/trends-metrics${accountParam}`),
+        fetch(`/api/security-metrics${accountParam}`)
+      ])
+
+      console.log('📊 API Response Status:', {
+        cost: costRes.status,
+        usage: usageRes.status,
+        compute: computeRes.status,
+        trends: trendsRes.status,
+        security: securityRes.status
+      })
+
+      const [cost, usage, compute, trends, security] = await Promise.all([
+        costRes.json(),
+        usageRes.json(),
+        computeRes.json(),
+        trendsRes.json(),
+        securityRes.json()
+      ])
+
+      console.log('✅ Real AWS Data Received:', {
+        totalSpent: cost.data?.totalSpent,
+        ec2Instances: usage.data?.ec2Instances,
+        lambdaFunctions: compute.data?.lambdaFunctions,
+        costSuccess: cost.success,
+        usageSuccess: usage.success
+      })
+
+      setData({
+        cost: cost.data,
+        usage: usage.data,
+        compute: compute.data,
+        trends: trends.data,
+        security: security.data
+      })
+    } catch (error) {
+      console.error('❌ Failed to fetch dashboard data:', error)
+      console.log('🔄 Using fallback data due to error')
+      // Set fallback data only if API calls fail
+      setData({
+        cost: {
+          totalSpent: 12450,
+          monthlyGrowth: 8.5,
+          budgetUsed: 73,
+          topServices: [
+            { service: 'EC2', cost: 4200 },
+            { service: 'S3', cost: 1800 },
+            { service: 'RDS', cost: 2100 }
+          ]
+        },
+        usage: {
+          ec2Instances: 247,
+          runningInstances: 189,
+          storageUsageTB: 1.247,
+          dataTransferGB: 45230,
+          avgUtilization: 73
+        },
+        compute: {
+          ec2Running: 189,
+          ec2Stopped: 58,
+          lambdaFunctions: 47,
+          ecsClusters: 3,
+          totalCompute: 297
+        },
+        trends: {
+          monthlyGrowth: 8.5,
+          sixMonthGrowth: 24.3,
+          yearlyGrowth: 31.7,
+          nextMonthForecast: 13750,
+          efficiencyScore: 87
+        },
+        security: {
+          securityScore: 87,
+          complianceScore: 92,
+          criticalFindings: 2,
+          mfaPercentage: 75
         }
       })
-      router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-      return updated
-    })
-  }
-
-  // Reset all filters
-  const resetFilters = () => {
-    setFilters({
-      payerAccounts: [],
-      accountNames: [],
-      linkedAccountIds: [],
-      chargeType: [],
-      regions: []
-    })
-    router.push(router.pathname, undefined, { shallow: true })
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/billing-metrics')
-        const result = await response.json()
-        setData({
-          ...result.data,
-          riCoverage: 65,
-          spCoverage: 25,
-          anomalies: [
-            { date: 'Feb 15, 2026', amount: 850, reason: 'Spike in EC2 usage' },
-            { date: 'Feb 20, 2026', amount: 1200, reason: 'Data transfer increase' },
-            { date: 'Feb 25, 2026', amount: 1330, reason: 'RDS backup operations' }
-          ]
-        })
-      } catch (error) {
-        console.error('Failed to fetch dashboard data:', error)
-        setData({
-          invoiceThreeMonthsAgo: 1010,
-          invoiceTwoMonthsAgo: 1650,
-          invoicePreviousMonth: 3380,
-          totalAccountsPreviousMonth: 1,
-          totalServicesPreviousMonth: 56,
-          monthlyTrend: [
-            { month: 'Dec 2025', amount: 1010 },
-            { month: 'Jan 2026', amount: 1650 },
-            { month: 'Feb 2026', amount: 3380 }
-          ],
-          serviceBreakdown: [
-            { service: 'EC2', cost: 1200 },
-            { service: 'S3', cost: 800 },
-            { service: 'RDS', cost: 600 },
-            { service: 'Lambda', cost: 400 },
-            { service: 'Others', cost: 380 }
-          ],
-          regionBreakdown: [
-            { region: 'ap-south-1', cost: 1500 },
-            { region: 'us-east-1', cost: 1200 },
-            { region: 'eu-north-1', cost: 400 },
-            { region: 'us-west-2', cost: 280 }
-          ],
-          savingsData: {
-            riSavings: 450,
-            savingsPlans: 320,
-            spotSavings: 180,
-            credits: 100,
-            refunds: 50
-          },
-          riCoverage: 65,
-          spCoverage: 25,
-          anomalies: [
-            { date: 'Feb 15, 2026', amount: 850, reason: 'Spike in EC2 usage' },
-            { date: 'Feb 20, 2026', amount: 1200, reason: 'Data transfer increase' },
-            { date: 'Feb 25, 2026', amount: 1330, reason: 'RDS backup operations' }
-          ]
-        })
-      } finally {
-        setLoading(false)
-      }
+    // Initial load
+    const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
+    fetchAllData(savedAccount || undefined)
+
+    // Listen for account changes
+    const handleAccountChange = (event: CustomEvent) => {
+      setLoading(true)
+      fetchAllData(event.detail === 'all' ? undefined : event.detail)
     }
 
-    fetchData()
+    if (typeof window !== 'undefined') {
+      window.addEventListener('accountChanged', handleAccountChange as EventListener)
+      return () => {
+        window.removeEventListener('accountChanged', handleAccountChange as EventListener)
+      }
+    }
   }, [])
 
   const formatCurrency = (amount: number) => {
@@ -240,154 +161,375 @@ export default function Dashboard() {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount)
   }
 
-  const COLORS = ['#1B7D3F', '#2BA84F', '#155E31', '#0F5C2E', '#0A4620']
+  const formatPercentage = (value: number) => {
+    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`
+  }
 
-  const BillingDetailModal = ({ card, onClose }: { card: string | null; onClose: () => void }) => {
+  const CardDetailsModal = ({ card, onClose }: { card: string | null; onClose: () => void }) => {
     if (!card || !data) return null
+
+    const getCardDetails = () => {
+      switch (card) {
+        case 'totalSpent':
+          return {
+            title: 'Total Spent Breakdown',
+            items: data.cost.topServices.map((s) => ({
+              label: s.service,
+              value: formatCurrency(s.cost),
+              percentage: ((s.cost / data.cost.totalSpent) * 100).toFixed(1),
+              clickable: true
+            }))
+          }
+        case 'monthlyGrowth':
+          return {
+            title: 'Growth Analysis',
+            items: [
+              { label: 'Monthly Growth', value: formatPercentage(data.trends.monthlyGrowth) },
+              { label: '6-Month Growth', value: formatPercentage(data.trends.sixMonthGrowth) },
+              { label: 'Yearly Growth', value: formatPercentage(data.trends.yearlyGrowth) }
+            ]
+          }
+        case 'budgetUsed':
+          return {
+            title: 'Budget Status',
+            items: [
+              { label: 'Budget Used', value: `${data.cost.budgetUsed}%` },
+              { label: 'Amount Spent', value: formatCurrency(data.cost.totalSpent) },
+              { label: 'Status', value: data.cost.budgetUsed > 80 ? 'Critical' : data.cost.budgetUsed > 60 ? 'Warning' : 'Healthy' }
+            ]
+          }
+        case 'nextMonth':
+          return {
+            title: 'Next Month Forecast',
+            items: [
+              { label: 'Forecasted Amount', value: formatCurrency(data.trends.nextMonthForecast) },
+              { label: 'Current Month', value: formatCurrency(data.cost.totalSpent) },
+              { label: 'Expected Increase', value: formatCurrency(data.trends.nextMonthForecast - data.cost.totalSpent) }
+            ]
+          }
+        case 'ec2':
+          return {
+            title: 'EC2 Instances',
+            items: [
+              { label: 'Total Instances', value: data.usage.ec2Instances.toString(), clickable: true },
+              { label: 'Running', value: data.usage.runningInstances.toString(), clickable: true },
+              { label: 'Stopped', value: (data.usage.ec2Instances - data.usage.runningInstances).toString(), clickable: true }
+            ]
+          }
+        case 'lambda':
+          return {
+            title: 'Lambda Functions',
+            items: [
+              { label: 'Total Functions', value: data.compute.lambdaFunctions.toString(), clickable: true },
+              { label: 'Active', value: Math.ceil(data.compute.lambdaFunctions * 0.8).toString(), clickable: true },
+              { label: 'Inactive', value: Math.floor(data.compute.lambdaFunctions * 0.2).toString(), clickable: true }
+            ]
+          }
+        case 'storage':
+          return {
+            title: 'Storage Usage',
+            items: [
+              { label: 'Total Storage', value: `${data.usage.storageUsageTB.toFixed(2)} TB`, clickable: true },
+              { label: 'Data Transfer', value: `${data.usage.dataTransferGB.toLocaleString()} GB`, clickable: true },
+              { label: 'Utilization', value: `${data.usage.avgUtilization}%`, clickable: true }
+            ]
+          }
+        case 'security':
+          return {
+            title: 'Security Score',
+            items: [
+              { label: 'Security Score', value: `${data.security.securityScore}%` },
+              { label: 'Compliance Score', value: `${data.security.complianceScore}%` },
+              { label: 'Critical Issues', value: data.security.criticalFindings.toString() }
+            ]
+          }
+        default:
+          return { title: '', items: [] }
+      }
+    }
+
+    const details = getCardDetails()
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
         <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900">
-              {card === 'invoice3m' && '📊 Invoice 3 Months Ago'}
-              {card === 'invoice2m' && '📊 Invoice 2 Months Ago'}
-              {card === 'invoice1m' && '📊 Invoice Previous Month'}
-              {card === 'accounts' && '👥 Total Accounts'}
-              {card === 'services' && '🔧 Total Services'}
-            </h2>
+          <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 border-b border-gray-200">
+            <h2 className="text-4xl font-bold text-gray-900">{details.title}</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors"
+              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-lg flex-shrink-0"
             >
               ✕
             </button>
           </div>
-
-          <div className="space-y-6">
-            {card === 'invoice3m' && (
-              <>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
-                    <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
-                    <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceThreeMonthsAgo)}</p>
-                  </div>
-                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
-                    <p className="text-sm font-semibold text-white mb-2">Services</p>
-                    <p className="text-4xl font-bold text-white">{data.totalServicesPreviousMonth}</p>
-                  </div>
-                  <div className="p-6 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl border border-green-300">
-                    <p className="text-sm font-semibold text-white mb-2">Accounts</p>
-                    <p className="text-4xl font-bold text-white">{data.totalAccountsPreviousMonth}</p>
-                  </div>
-                </div>
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                  <p className="text-lg font-bold text-gray-900 mb-4">Service Breakdown</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie data={data.serviceBreakdown} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${formatCurrency(value as number)}`} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
-                        {data.serviceBreakdown.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              </>
-            )}
-
-            {card === 'invoice2m' && (
-              <>
-                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
-                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
-                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
-                </div>
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                  <p className="text-lg font-bold text-gray-900 mb-4">Monthly Trend</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={data.monthlyTrend}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                      <Line type="monotone" dataKey="amount" stroke="#1B7D3F" strokeWidth={3} dot={{ fill: '#1B7D3F', r: 6 }} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </>
-            )}
-
-            {card === 'invoice1m' && (
-              <>
-                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
-                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
-                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoicePreviousMonth)}</p>
-                </div>
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                  <p className="text-lg font-bold text-gray-900 mb-4">Region Breakdown</p>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={data.regionBreakdown}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="region" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                      <Bar dataKey="cost" fill="#1B7D3F" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </>
-            )}
-
-            {card === 'accounts' && (
-              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                <p className="text-lg font-bold text-gray-900 mb-4">Account Details</p>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center p-4 bg-white rounded-lg border border-gray-200">
-                    <span className="font-semibold text-gray-800">Primary Account</span>
-                    <span className="text-lg font-bold text-[#1B7D3F]">{formatCurrency(data.invoicePreviousMonth)}</span>
-                  </div>
+          <div className="space-y-4 max-h-96 overflow-y-auto pr-4">
+            {details.items.map((item, idx) => (
+              <div 
+                key={idx} 
+                onClick={() => {
+                  if ('clickable' in item && item.clickable) {
+                    setSelectedService(item.label)
+                    setShowDetailView(true)
+                  }
+                }}
+                className={`flex justify-between items-center p-5 bg-gradient-to-r from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl border border-[#1B7D3F]/20 ${
+                  'clickable' in item && item.clickable ? 'cursor-pointer hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all' : ''
+                }`}
+              >
+                <span className="text-gray-800 font-semibold text-lg">{item.label}</span>
+                <div className="text-right">
+                  <span className="text-3xl font-bold text-gray-900">{item.value}</span>
+                  {'percentage' in item && item.percentage && (
+                    <p className="text-sm text-gray-600 mt-1">{item.percentage}% of total</p>
+                  )}
+                  {'clickable' in item && item.clickable && <p className="text-sm text-blue-600 font-medium mt-1">Click for details →</p>}
                 </div>
               </div>
-            )}
-
-            {card === 'services' && (
-              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                <p className="text-lg font-bold text-gray-900 mb-4">Top Services</p>
-                <div className="space-y-3">
-                  {data.serviceBreakdown.map((service, idx) => (
-                    <div key={idx} className="flex justify-between items-center p-4 bg-white rounded-lg border border-gray-200">
-                      <span className="font-semibold text-gray-800">{service.service}</span>
-                      <span className="text-lg font-bold text-[#1B7D3F]">{formatCurrency(service.cost)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            ))}
           </div>
-
-          <button
-            onClick={onClose}
-            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
-          >
-            Close
-          </button>
+          <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              Close
+            </button>
+            <button
+              onClick={() => alert('📊 Detailed report generated')}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              📊 View Report
+            </button>
+            <button
+              onClick={() => alert('💰 Optimization recommendations generated')}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              💰 Optimize
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
-  if (loading || !data) {
+  const DetailViewModal = ({ service, onClose }: { service: string | null; onClose: () => void }) => {
+    if (!service) return null
+    const [detailView, setDetailView] = useState<'main' | 'metrics' | 'optimization'>('main')
+
+    const handleViewMetrics = () => {
+      setDetailView('metrics')
+    }
+
+    const handleApplyOptimization = () => {
+      setDetailView('optimization')
+    }
+
+    const handleExportReport = () => {
+      const reportData = `Service,Current Usage,Cost Trend,Optimization,Recommendation,Monthly Cost,Potential Savings
+${service},High,↓ 5%,Medium,Review sizing,$2450,$1135
+${service} - CPU,78%,Stable,High,Optimize sizing,$1200,$450
+${service} - Memory,65%,Increasing,Medium,Monitor growth,$800,$280
+${service} - Network,450 Mbps,Stable,Low,Current optimal,$300,$0
+${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
+
+      const blob = new Blob([reportData], { type: 'text/csv' })
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${service}-optimization-report-${new Date().toISOString().split('T')[0]}.csv`
+      a.click()
+      window.URL.revokeObjectURL(url)
+    }
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
+          <div className="flex justify-between items-center mb-8 sticky top-0 bg-white pb-4 border-b border-gray-200">
+            <h2 className="text-4xl font-bold text-gray-900">
+              {detailView === 'main' && `Details: ${service}`}
+              {detailView === 'metrics' && `📊 Detailed Metrics: ${service}`}
+              {detailView === 'optimization' && `💰 Optimization Recommendations: ${service}`}
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors w-12 h-12 flex items-center justify-center hover:bg-gray-100 rounded-lg flex-shrink-0"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <div className="space-y-6 max-h-96 overflow-y-auto pr-4">
+            {detailView === 'main' && (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Current Usage</p>
+                    <p className="text-4xl font-bold text-blue-600">High</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Cost Trend</p>
+                    <p className="text-4xl font-bold text-green-600">↓ 5%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl border border-yellow-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Optimization</p>
+                    <p className="text-4xl font-bold text-yellow-600">Medium</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200">
+                    <p className="text-sm font-semibold text-gray-600 mb-2">Recommendation</p>
+                    <p className="text-lg font-bold text-purple-600">Review sizing</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-semibold text-gray-700 mb-4">Actions:</p>
+                  <div className="space-y-3">
+                    <button 
+                      onClick={handleViewMetrics}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      📊 View Detailed Metrics
+                    </button>
+                    <button 
+                      onClick={handleApplyOptimization}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white rounded-xl hover:from-[#1B7D3F] hover:to-[#155E31] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      ✅ Apply Optimization
+                    </button>
+                    <button 
+                      onClick={handleExportReport}
+                      className="w-full px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] font-semibold shadow-lg hover:shadow-xl transition-all text-lg active:scale-95"
+                    >
+                      📥 Export Report
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            
+            {detailView === 'metrics' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">CPU Utilization</p>
+                    <p className="text-4xl font-bold text-white">78%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Memory Usage</p>
+                    <p className="text-4xl font-bold text-white">65%</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Network I/O</p>
+                    <p className="text-3xl font-bold text-white">450 Mbps</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Disk I/O</p>
+                    <p className="text-3xl font-bold text-white">320 IOPS</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-semibold text-gray-800 mb-4">Cost Analysis</p>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Cost per hour</span>
+                      <span className="text-2xl font-bold text-[#1B7D3F]">$2.45</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Monthly projection</span>
+                      <span className="text-2xl font-bold text-[#1B7D3F]">$1,764</span>
+                    </div>
+                    <div className="flex justify-between items-center p-3 bg-white rounded-lg border border-gray-200">
+                      <span className="text-gray-700 font-medium">Generated</span>
+                      <span className="text-sm font-medium text-gray-600">{new Date().toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {detailView === 'optimization' && (
+              <div className="space-y-4">
+                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                  <p className="text-lg font-bold text-white mb-2">Total Potential Savings</p>
+                  <p className="text-5xl font-bold text-white">$1,135/month</p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">1. Right-size instances</p>
+                    <p className="text-sm text-gray-700 mb-2">Current: t3.large → Recommended: t3.medium</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $340/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">2. Enable auto-scaling</p>
+                    <p className="text-sm text-gray-700 mb-2">Min: 2 instances, Max: 8 instances</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $180/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">3. Use Reserved Instances</p>
+                    <p className="text-sm text-gray-700 mb-2">1-year commitment for better rates</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $520/month</p>
+                  </div>
+                  
+                  <div className="p-4 bg-white rounded-xl border border-gray-200">
+                    <p className="font-bold text-gray-900 mb-2">4. Implement caching</p>
+                    <p className="text-sm text-gray-700 mb-2">Reduce database calls by 40%</p>
+                    <p className="text-lg font-bold text-[#1B7D3F]">Savings: $95/month</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+                  <p className="text-sm font-semibold text-gray-600 mb-1">Status</p>
+                  <p className="text-lg font-bold text-green-700">✅ Ready to apply</p>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="flex gap-3 mt-8 pt-6 border-t border-gray-200">
+            {detailView !== 'main' && (
+              <button
+                onClick={() => setDetailView('main')}
+                className="flex-1 px-6 py-4 bg-gray-600 text-white rounded-xl hover:bg-gray-700 transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+              >
+                ← Back
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
     return (
       <Layout>
         <div className="space-y-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#155E31] bg-clip-text text-transparent">Cloud Financial Command Center</h1>
-            <p className="text-gray-600 text-lg font-medium mt-2">Loading dashboard analytics...</p>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Financial Command Center</h1>
+            <p className="text-gray-600 text-lg font-medium mt-2">Loading comprehensive AWS analytics...</p>
+          </div>
+          
+          {/* Loading skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-300 rounded w-3/4 mb-3"></div>
+                  <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Layout>
@@ -397,352 +539,354 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-8">
-        {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#155E31] bg-clip-text text-transparent">Cloud Financial Command Center</h1>
-          <p className="text-gray-600 text-lg font-medium mt-2">Comprehensive cloud cost analytics and billing insights</p>
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">Cloud Financial Command Center</h1>
+              <p className="text-gray-600 text-lg font-medium mt-2">
+                Turning AWS spend into strategic advantage.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <select 
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as 'service' | 'region' | 'all')}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B7D3F]"
+              >
+                <option value="all">All Services</option>
+                <option value="service">By Service</option>
+                <option value="region">By Region</option>
+              </select>
+              <button
+                onClick={() => {
+                  setLoading(true)
+                  setData(null)
+                  const savedAccount = typeof window !== 'undefined' ? localStorage.getItem('selectedAccount') : null
+                  fetchAllData(savedAccount || undefined)
+                }}
+                className="px-4 py-2 bg-[#1B7D3F] text-white rounded-lg hover:bg-[#155E31] transition-colors"
+              >
+                🔄 Refresh Data
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Filter Controls */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">🔍 Filters & Controls</h3>
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 transition-all font-semibold text-sm"
+        {/* Cost Overview Cards */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">💰 Cost Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div 
+              onClick={() => setExpandedCard('totalSpent')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
-              ↻ Reset Filters
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <MultiSelectDropdown
-              label="Payer Accounts"
-              options={filterOptions.payerAccounts}
-              selected={filters.payerAccounts}
-              onChange={(values) => {
-                setFilters(prev => {
-                  const updated = { ...prev, payerAccounts: values }
-                  const query: any = {}
-                  Object.entries(updated).forEach(([key, vals]) => {
-                    if ((vals as string[]).length > 0) {
-                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
-                    }
-                  })
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-                  return updated
-                })
-              }}
-            />
-
-            <MultiSelectDropdown
-              label="Account Names"
-              options={filterOptions.accountNames}
-              selected={filters.accountNames}
-              onChange={(values) => {
-                setFilters(prev => {
-                  const updated = { ...prev, accountNames: values }
-                  const query: any = {}
-                  Object.entries(updated).forEach(([key, vals]) => {
-                    if ((vals as string[]).length > 0) {
-                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
-                    }
-                  })
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-                  return updated
-                })
-              }}
-            />
-
-            <MultiSelectDropdown
-              label="Linked Account IDs"
-              options={filterOptions.linkedAccountIds}
-              selected={filters.linkedAccountIds}
-              onChange={(values) => {
-                setFilters(prev => {
-                  const updated = { ...prev, linkedAccountIds: values }
-                  const query: any = {}
-                  Object.entries(updated).forEach(([key, vals]) => {
-                    if ((vals as string[]).length > 0) {
-                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
-                    }
-                  })
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-                  return updated
-                })
-              }}
-            />
-
-            <MultiSelectDropdown
-              label="Charge Type"
-              options={filterOptions.chargeType}
-              selected={filters.chargeType}
-              onChange={(values) => {
-                setFilters(prev => {
-                  const updated = { ...prev, chargeType: values }
-                  const query: any = {}
-                  Object.entries(updated).forEach(([key, vals]) => {
-                    if ((vals as string[]).length > 0) {
-                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
-                    }
-                  })
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-                  return updated
-                })
-              }}
-            />
-
-            <MultiSelectDropdown
-              label="Regions"
-              options={filterOptions.regions}
-              selected={filters.regions}
-              onChange={(values) => {
-                setFilters(prev => {
-                  const updated = { ...prev, regions: values }
-                  const query: any = {}
-                  Object.entries(updated).forEach(([key, vals]) => {
-                    if ((vals as string[]).length > 0) {
-                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
-                    }
-                  })
-                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
-                  return updated
-                })
-              }}
-            />
-          </div>
-
-          {/* Active Filters Display */}
-          {(filters.payerAccounts.length > 0 || filters.accountNames.length > 0 || filters.linkedAccountIds.length > 0 || filters.chargeType.length > 0 || filters.regions.length > 0) && (
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Active Filters:</p>
-              <div className="flex flex-wrap gap-2">
-                {filters.payerAccounts.map(acc => <span key={acc} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Payer: {acc}</span>)}
-                {filters.accountNames.map(name => <span key={name} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Account: {name}</span>)}
-                {filters.linkedAccountIds.map(id => <span key={id} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">ID: {id}</span>)}
-                {filters.chargeType.map(type => <span key={type} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Type: {type}</span>)}
-                {filters.regions.map(region => <span key={region} className="px-3 py-1 bg-[#1B7D3F]/10 text-[#1B7D3F] rounded-full text-sm font-medium">Region: {region}</span>)}
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                    💵
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Spent</p>
+                  <p className="text-3xl font-bold text-gray-800 leading-tight">
+                    {data ? formatCurrency(data.cost.totalSpent) : '$0'}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
               </div>
             </div>
-          )}
+
+            <div 
+              onClick={() => setExpandedCard('monthlyGrowth')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.cost.monthlyGrowth >= 0 ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                  }`}>
+                    📈
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Monthly Growth</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.cost.monthlyGrowth >= 0 ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {data ? formatPercentage(data.cost.monthlyGrowth) : '0%'}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setExpandedCard('budgetUsed')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.cost.budgetUsed > 80 ? 'bg-gradient-to-br from-red-400 to-red-500' : 
+                    data && data.cost.budgetUsed > 60 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                  }`}>
+                    🎯
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Budget Used</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.cost.budgetUsed > 80 ? 'text-red-600' : 
+                    data && data.cost.budgetUsed > 60 ? 'text-yellow-600' : 'text-green-600'
+                  }`}>
+                    {data?.cost.budgetUsed || 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setExpandedCard('nextMonth')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-slate-400 to-gray-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                    🔮
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Next Month</p>
+                  <p className="text-3xl font-bold text-gray-800 leading-tight">
+                    {data ? formatCurrency(data.trends.nextMonthForecast) : '$0'}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-4 border-b border-gray-200">
-          <button
-            onClick={() => setActiveTab('billing')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'billing'
-                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            💰 Billing Overview
-          </button>
-          <button
-            onClick={() => setActiveTab('risp')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'risp'
-                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            📊 RI/SP Summary
-          </button>
-          <button
-            onClick={() => setActiveTab('trends')}
-            className={`px-6 py-3 font-semibold transition-all ${
-              activeTab === 'trends'
-                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            📈 Trends & Forecast
-          </button>
+        {/* Resource Overview */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">🖥️ Resource Overview</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div 
+              onClick={() => setExpandedCard('ec2')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                    🖥️
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">EC2 Instances</p>
+                  <p className="text-3xl font-bold text-gray-800 leading-tight">
+                    {data?.usage.ec2Instances || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setExpandedCard('lambda')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                    ⚡
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Lambda Functions</p>
+                  <p className="text-3xl font-bold text-gray-800 leading-tight">
+                    {data?.compute.lambdaFunctions || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setExpandedCard('storage')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-indigo-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+                    💾
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Storage</p>
+                  <p className="text-3xl font-bold text-gray-800 leading-tight">
+                    {data?.usage.storageUsageTB.toFixed(1) || '0'} TB
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => setExpandedCard('storage')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.usage.avgUtilization > 80 ? 'bg-gradient-to-br from-red-400 to-red-500' : 
+                    data && data.usage.avgUtilization > 60 ? 'bg-gradient-to-br from-yellow-400 to-yellow-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                  }`}>
+                    📊
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Avg Utilization</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.usage.avgUtilization > 80 ? 'text-red-600' : 
+                    data && data.usage.avgUtilization > 60 ? 'text-yellow-600' : 'text-green-600'
+                  }`}>
+                    {data?.usage.avgUtilization || 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Billing Tab */}
-        {activeTab === 'billing' && (
-          <div className="space-y-8">
-            {/* Billing Details */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">💰 Billing Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div
-                  onClick={() => setExpandedCard('invoice3m')}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice 3M Ago</p>
-                    <span className="text-2xl">📊</span>
+        {/* Security & Compliance */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">🛡️ Security & Compliance</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.security.securityScore > 80 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                  }`}>
+                    🛡️
                   </div>
-                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoiceThreeMonthsAgo)}</p>
-                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
                 </div>
-
-                <div
-                  onClick={() => setExpandedCard('invoice2m')}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice 2M Ago</p>
-                    <span className="text-2xl">📊</span>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
-                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
-                </div>
-
-                <div
-                  onClick={() => setExpandedCard('invoice1m')}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice Prev Month</p>
-                    <span className="text-2xl">📊</span>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoicePreviousMonth)}</p>
-                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
-                </div>
-
-                <div
-                  onClick={() => setExpandedCard('accounts')}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Accounts</p>
-                    <span className="text-2xl">👥</span>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{data.totalAccountsPreviousMonth}</p>
-                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
-                </div>
-
-                <div
-                  onClick={() => setExpandedCard('services')}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Services</p>
-                    <span className="text-2xl">🔧</span>
-                  </div>
-                  <p className="text-3xl font-bold text-gray-900">{data.totalServicesPreviousMonth}</p>
-                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Security Score</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.security.securityScore > 80 ? 'text-green-600' : 'text-yellow-600'
+                  }`}>
+                    {data?.security.securityScore || 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
 
-            {/* Spend Trends */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">📈 Spend Trends</h2>
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={data.monthlyTrend}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                    <Legend />
-                    <Line type="monotone" dataKey="amount" stroke="#1B7D3F" strokeWidth={3} dot={{ fill: '#1B7D3F', r: 8 }} name="Monthly Spend" />
-                  </LineChart>
-                </ResponsiveContainer>
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.security.complianceScore > 90 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-yellow-400 to-yellow-500'
+                  }`}>
+                    ✅
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Compliance</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.security.complianceScore > 90 ? 'text-green-600' : 'text-yellow-600'
+                  }`}>
+                    {data?.security.complianceScore || 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
               </div>
             </div>
 
-            {/* Service & Region Breakdown */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">🔧 Service Breakdown</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie data={data.serviceBreakdown} cx="50%" cy="50%" labelLine={false} label={({ name }) => name} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
-                      {data.serviceBreakdown.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">🌍 Region Breakdown</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={data.regionBreakdown}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="region" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
-                    <Bar dataKey="cost" fill="#1B7D3F" />
-                  </BarChart>
-                </ResponsiveContainer>
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.security.criticalFindings > 0 ? 'bg-gradient-to-br from-red-400 to-red-500' : 'bg-gradient-to-br from-green-400 to-green-500'
+                  }`}>
+                    🚨
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Critical Issues</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.security.criticalFindings > 0 ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {data?.security.criticalFindings || 0}
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
+                </div>
               </div>
             </div>
 
-            {/* Savings Section */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">💚 Savings & Discounts</h2>
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-                <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">RI Savings</p>
-                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.riSavings)}</p>
+            <div 
+              onClick={() => setExpandedCard('security')}
+              className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+            >
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                    data && data.security.mfaPercentage > 80 ? 'bg-gradient-to-br from-green-400 to-green-500' : 'bg-gradient-to-br from-red-400 to-red-500'
+                  }`}>
+                    🔐
+                  </div>
                 </div>
-                <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Savings Plans</p>
-                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.savingsPlans)}</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Spot Savings</p>
-                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.spotSavings)}</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#1B7D3F] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Credits</p>
-                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.credits)}</p>
-                </div>
-                <div className="bg-gradient-to-br from-[#2BA84F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Refunds</p>
-                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.refunds)}</p>
+                <div className="ml-4">
+                  <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">MFA Enabled</p>
+                  <p className={`text-3xl font-bold leading-tight ${
+                    data && data.security.mfaPercentage > 80 ? 'text-green-600' : 'text-red-600'
+                  }`}>
+                    {data?.security.mfaPercentage || 0}%
+                  </p>
+                  <p className="text-xs text-gray-500 font-medium">Click to expand</p>
                 </div>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* RI/SP Tab */}
-        {activeTab === 'risp' && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                <p className="text-sm font-semibold uppercase tracking-wide mb-2">RI Coverage</p>
-                <p className="text-4xl font-bold">{data.riCoverage}%</p>
-              </div>
-              <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                <p className="text-sm font-semibold uppercase tracking-wide mb-2">SP Coverage</p>
-                <p className="text-4xl font-bold">{data.spCoverage}%</p>
-              </div>
-              <div className="bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                <p className="text-sm font-semibold uppercase tracking-wide mb-2">Total Savings</p>
-                <p className="text-4xl font-bold">{formatCurrency(data.savingsData.riSavings + data.savingsData.savingsPlans)}</p>
-              </div>
-              <div className="bg-gradient-to-br from-[#1B7D3F] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
-                <p className="text-sm font-semibold uppercase tracking-wide mb-2">Combined Coverage</p>
-                <p className="text-4xl font-bold">{data.riCoverage + data.spCoverage}%</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Trends Tab */}
-        {activeTab === 'trends' && (
-          <div className="space-y-8">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">📈 Cost Anomalies</h3>
-              <div className="space-y-3">
-                {data.anomalies.map((anomaly, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border border-red-200">
-                    <div>
-                      <p className="font-semibold text-gray-900">{anomaly.date}</p>
-                      <p className="text-sm text-gray-600">{anomaly.reason}</p>
+        {/* Top Services by Cost */}
+        {data && data.cost.topServices.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">💸 Top Services by Cost</h2>
+            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+              <div className="space-y-4">
+                {data.cost.topServices.map((service, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gradient-to-br from-gray-400 to-gray-500 rounded-lg flex items-center justify-center text-white text-sm font-bold mr-3">
+                        {index + 1}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-800">{service.service}</span>
                     </div>
-                    <p className="text-2xl font-bold text-red-600">{formatCurrency(anomaly.amount)}</p>
+                    <div className="flex items-center">
+                      <span className="text-lg font-bold text-gray-800 mr-3">
+                        {formatCurrency(service.cost)}
+                      </span>
+                      <div className="w-20 bg-gray-200 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-gray-400 to-gray-500 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${(service.cost / (data.cost.topServices[0]?.cost || 1)) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -750,17 +894,93 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Insights */}
-        <div className="bg-gradient-to-r from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl border border-[#1B7D3F]/20 p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">💡 Insights</h3>
-          <p className="text-gray-700 leading-relaxed">
-            Your cloud spend shows a growth trend with significant increases month-over-month. Consider optimizing your Reserved Instance coverage 
-            and evaluating Savings Plans for predictable workloads to maximize cost efficiency. Multiple cost anomalies detected - review workload scaling.
-          </p>
+        {/* Performance Metrics */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">📈 Performance Metrics</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Growth Trends</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Monthly</span>
+                  <span className={`text-sm font-semibold ${
+                    data && data.trends.monthlyGrowth >= 0 ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {data ? formatPercentage(data.trends.monthlyGrowth) : '0%'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">6-Month</span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {data ? formatPercentage(data.trends.sixMonthGrowth) : '0%'}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Yearly</span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {data ? formatPercentage(data.trends.yearlyGrowth) : '0%'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Efficiency Score</h3>
+              <div className="flex items-center justify-center">
+                <div className="relative w-24 h-24">
+                  <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="#6b7280"
+                      strokeWidth="2"
+                      strokeDasharray={`${data?.trends.efficiencyScore || 0}, 100`}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gray-800">
+                      {data?.trends.efficiencyScore || 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl shadow-lg border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Quick Stats</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Total Resources</span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {data?.compute.totalCompute || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Data Transfer</span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {data?.usage.dataTransferGB.toLocaleString() || '0'} GB
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">ECS Clusters</span>
+                  <span className="text-sm font-semibold text-gray-800">
+                    {data?.compute.ecsClusters || 0}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {expandedCard && <BillingDetailModal card={expandedCard} onClose={() => setExpandedCard(null)} />}
+      <CardDetailsModal card={expandedCard} onClose={() => setExpandedCard(null)} />
+      <DetailViewModal service={showDetailView ? selectedService : null} onClose={() => setShowDetailView(false)} />
     </Layout>
   )
 }

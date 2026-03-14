@@ -94,7 +94,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { name: 'Trends', href: '/billing-trends', icon: '📈', color: 'from-[#2BA84F] to-[#155E31]' },
     { name: 'Support', href: '/support', icon: '🎫', color: 'from-[#1B7D3F] to-[#155E31]' },
     { name: 'SLA Monitor', href: '/sla-monitoring', icon: '⏱️', color: 'from-[#2BA84F] to-[#155E31]' },
-    { name: 'Overview', href: '/overview', icon: '📊', color: 'from-[#1B7D3F] to-[#155E31]' },
     { name: 'Usage', href: '/usage', icon: '📈', color: 'from-[#2BA84F] to-[#1B7D3F]' },
     { name: 'Compute', href: '/compute', icon: '🖥️', color: 'from-[#1B7D3F] to-[#0F5C2E]' },
     { name: 'Security', href: '/security', icon: '🛡️', color: 'from-[#2BA84F] to-[#155E31]' },
