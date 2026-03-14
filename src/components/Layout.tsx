@@ -88,6 +88,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   }
 
   const navigation = [
+    { name: 'Billing', href: '/billing', icon: '💰', color: 'from-[#1B7D3F] to-[#155E31]' },
     { name: 'Dashboard', href: '/dashboard', icon: '💼', color: 'from-[#1B7D3F] to-[#155E31]' },
     { name: 'Overview', href: '/overview', icon: '📊', color: 'from-[#2BA84F] to-[#1B7D3F]' },
     { name: 'Usage', href: '/usage', icon: '📈', color: 'from-[#1B7D3F] to-[#0F5C2E]' },
