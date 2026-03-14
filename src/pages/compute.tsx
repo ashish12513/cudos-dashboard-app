@@ -78,42 +78,50 @@ export default function Compute() {
 
         <div className="premium-grid-4">
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ec2')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-green-400 to-green-500 text-white">🖥️</div>
-              <div className="ml-4">
-                <p className="premium-text-label">EC2 Running</p>
-                <p className="premium-text-value text-green-600">{metrics?.ec2Running || 0}</p>
-                <p className="premium-text-muted">{metrics?.ec2Stopped || 0} stopped</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-green-300 to-green-400 text-white">🖥️</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">EC2 Running</p>
+                  <p className="premium-text-value">{metrics?.ec2Running || 0}</p>
+                  <p className="premium-text-muted">{metrics?.ec2Stopped || 0} stopped</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('lambda')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-blue-400 to-blue-500 text-white">⚡</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Lambda Functions</p>
-                <p className="premium-text-value">{metrics?.lambdaFunctions || 0}</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">⚡</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Lambda Functions</p>
+                  <p className="premium-text-value">{metrics?.lambdaFunctions || 0}</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ecs')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-purple-400 to-purple-500 text-white">🐳</div>
-              <div className="ml-4">
-                <p className="premium-text-label">ECS Clusters</p>
-                <p className="premium-text-value">{metrics?.ecsClusters || 0}</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🐳</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">ECS Clusters</p>
+                  <p className="premium-text-value">{metrics?.ecsClusters || 0}</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('total')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-amber-400 to-amber-500 text-white">📊</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Total Resources</p>
-                <p className="premium-text-value">{metrics?.totalCompute || 0}</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-amber-300 to-amber-400 text-white">📊</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Total Resources</p>
+                  <p className="premium-text-value">{metrics?.totalCompute || 0}</p>
+                </div>
               </div>
             </div>
           </div>

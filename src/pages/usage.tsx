@@ -67,48 +67,53 @@ export default function Usage() {
 
         <div className="premium-grid-4">
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ec2')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-slate-400 to-slate-500 text-white">🖥️</div>
-              <div className="ml-4">
-                <p className="premium-text-label">EC2 Instances</p>
-                <p className="premium-text-value">{metrics?.ec2Instances || 0}</p>
-                <p className="premium-text-muted">{metrics?.runningInstances || 0} running</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-slate-300 to-slate-400 text-white">🖥️</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">EC2 Instances</p>
+                  <p className="premium-text-value">{metrics?.ec2Instances || 0}</p>
+                  <p className="premium-text-muted">{metrics?.runningInstances || 0} running</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('storage')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-blue-400 to-blue-500 text-white">💾</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Storage</p>
-                <p className="premium-text-value">{metrics?.storageUsageTB.toFixed(1) || '0'} TB</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">💾</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Storage</p>
+                  <p className="premium-text-value">{metrics?.storageUsageTB.toFixed(1) || '0'} TB</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('transfer')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-purple-400 to-purple-500 text-white">🌐</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Data Transfer</p>
-                <p className="premium-text-value">{metrics?.dataTransferGB.toLocaleString() || '0'} GB</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🌐</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Data Transfer</p>
+                  <p className="premium-text-value">{metrics?.dataTransferGB.toLocaleString() || '0'} GB</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('utilization')}>
-            <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.avgUtilization > 80 ? 'from-red-400 to-red-500' : 
-                metrics && metrics.avgUtilization > 60 ? 'from-yellow-400 to-yellow-500' : 'from-green-400 to-green-500'
-              }`}>⚡</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Avg Utilization</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.avgUtilization > 80 ? 'text-red-600' : 
-                  metrics && metrics.avgUtilization > 60 ? 'text-yellow-600' : 'text-green-600'
-                }`}>{metrics?.avgUtilization || 0}%</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className={`premium-icon-box-gradient text-white ${
+                  metrics && metrics.avgUtilization > 80 ? 'from-red-300 to-red-400' : 
+                  metrics && metrics.avgUtilization > 60 ? 'from-yellow-300 to-yellow-400' : 'from-green-300 to-green-400'
+                }`}>⚡</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Avg Utilization</p>
+                  <p className="premium-text-value">{metrics?.avgUtilization || 0}%</p>
+                </div>
               </div>
             </div>
           </div>

@@ -88,61 +88,62 @@ export default function Trends() {
 
         <div className="premium-grid-4">
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('monthly')}>
-            <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.monthlyGrowth >= 0 ? 'from-green-400 to-green-500' : 'from-red-400 to-red-500'
-              }`}>
-                {metrics && metrics.monthlyGrowth >= 0 ? '📈' : '📉'}
-              </div>
-              <div className="ml-4">
-                <p className="premium-text-label">Monthly Growth</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.monthlyGrowth >= 0 ? 'text-green-600' : 'text-red-600'
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className={`premium-icon-box-gradient text-white ${
+                  metrics && metrics.monthlyGrowth >= 0 ? 'from-green-300 to-green-400' : 'from-red-300 to-red-400'
                 }`}>
-                  {metrics ? `${metrics.monthlyGrowth >= 0 ? '+' : ''}${metrics.monthlyGrowth.toFixed(1)}%` : '0%'}
-                </p>
+                  {metrics && metrics.monthlyGrowth >= 0 ? '📈' : '📉'}
+                </div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Monthly Growth</p>
+                  <p className="premium-text-value">
+                    {metrics ? `${metrics.monthlyGrowth >= 0 ? '+' : ''}${metrics.monthlyGrowth.toFixed(1)}%` : '0%'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('forecast')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-purple-400 to-purple-500 text-white">🔮</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Next Month Forecast</p>
-                <p className="premium-text-value">${(metrics?.nextMonthForecast || 0).toLocaleString()}</p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🔮</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Next Month Forecast</p>
+                  <p className="premium-text-value">${(metrics?.nextMonthForecast || 0).toLocaleString()}</p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('yoy')}>
-            <div className="flex items-center">
-              <div className="premium-icon-box-gradient from-blue-400 to-blue-500 text-white">📊</div>
-              <div className="ml-4">
-                <p className="premium-text-label">YoY Growth</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.yearlyGrowth >= 0 ? 'text-gray-900' : 'text-red-600'
-                }`}>
-                  {metrics ? `${metrics.yearlyGrowth >= 0 ? '+' : ''}${metrics.yearlyGrowth.toFixed(1)}%` : '0%'}
-                </p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">📊</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">YoY Growth</p>
+                  <p className="premium-text-value">
+                    {metrics ? `${metrics.yearlyGrowth >= 0 ? '+' : ''}${metrics.yearlyGrowth.toFixed(1)}%` : '0%'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('efficiency')}>
-            <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.efficiencyScore > 80 ? 'from-green-400 to-green-500' : 
-                metrics && metrics.efficiencyScore > 60 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
-              }`}>🎯</div>
-              <div className="ml-4">
-                <p className="premium-text-label">Efficiency Score</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.efficiencyScore > 80 ? 'text-green-600' : 
-                  metrics && metrics.efficiencyScore > 60 ? 'text-yellow-600' : 'text-red-600'
-                }`}>
-                  {metrics?.efficiencyScore || 0}%
-                </p>
+            <div className="premium-metric-card-dark-box">
+              <div className="flex items-center">
+                <div className={`premium-icon-box-gradient text-white ${
+                  metrics && metrics.efficiencyScore > 80 ? 'from-green-300 to-green-400' : 
+                  metrics && metrics.efficiencyScore > 60 ? 'from-yellow-300 to-yellow-400' : 'from-red-300 to-red-400'
+                }`}>🎯</div>
+                <div className="ml-4">
+                  <p className="premium-text-label">Efficiency Score</p>
+                  <p className="premium-text-value">
+                    {metrics?.efficiencyScore || 0}%
+                  </p>
+                </div>
               </div>
             </div>
           </div>
