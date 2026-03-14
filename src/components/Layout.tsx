@@ -142,7 +142,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Premium Navigation */}
-          <nav className="flex-1 px-6 py-8 space-y-2">
+          <nav className="flex-1 px-6 py-8 space-y-2 overflow-y-auto">
             {navigation.map((item) => {
               const isActive = router.pathname === item.href
               return (
