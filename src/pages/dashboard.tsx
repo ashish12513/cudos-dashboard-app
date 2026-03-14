@@ -1,5 +1,5 @@
 import Layout from '../components/Layout'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
 
@@ -30,6 +30,75 @@ interface Filters {
   linkedAccountIds: string[]
   chargeType: string[]
   regions: string[]
+}
+
+// Custom Multi-Select Dropdown Component
+function MultiSelectDropdown({ 
+  label, 
+  options, 
+  selected, 
+  onChange 
+}: { 
+  label: string
+  options: string[]
+  selected: string[]
+  onChange: (values: string[]) => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const toggleOption = (option: string) => {
+    if (selected.includes(option)) {
+      onChange(selected.filter(item => item !== option))
+    } else {
+      onChange([...selected, option])
+    }
+  }
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900 text-left flex justify-between items-center hover:border-[#1B7D3F] transition-colors"
+      >
+        <span className="text-sm">
+          {selected.length === 0 ? 'Select...' : `${selected.length} selected`}
+        </span>
+        <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+          {options.map(option => (
+            <label
+              key={option}
+              className="flex items-center px-4 py-2 hover:bg-[#1B7D3F]/5 cursor-pointer transition-colors"
+            >
+              <input
+                type="checkbox"
+                checked={selected.includes(option)}
+                onChange={() => toggleOption(option)}
+                className="w-4 h-4 text-[#1B7D3F] rounded focus:ring-2 focus:ring-[#1B7D3F] cursor-pointer"
+              />
+              <span className="ml-3 text-sm text-gray-700">{option}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function Dashboard() {
@@ -347,95 +416,100 @@ export default function Dashboard() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {/* Payer Accounts */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {filterOptions.payerAccounts.map(account => (
-                  <label key={account} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.payerAccounts.includes(account)}
-                      onChange={() => updateFilters('payerAccounts', account)}
-                      className="w-4 h-4 text-[#1B7D3F] rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{account}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <MultiSelectDropdown
+              label="Payer Accounts"
+              options={filterOptions.payerAccounts}
+              selected={filters.payerAccounts}
+              onChange={(values) => {
+                setFilters(prev => {
+                  const updated = { ...prev, payerAccounts: values }
+                  const query: any = {}
+                  Object.entries(updated).forEach(([key, vals]) => {
+                    if ((vals as string[]).length > 0) {
+                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
+                    }
+                  })
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+                  return updated
+                })
+              }}
+            />
 
-            {/* Account Names */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {filterOptions.accountNames.map(name => (
-                  <label key={name} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.accountNames.includes(name)}
-                      onChange={() => updateFilters('accountNames', name)}
-                      className="w-4 h-4 text-[#1B7D3F] rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{name}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <MultiSelectDropdown
+              label="Account Names"
+              options={filterOptions.accountNames}
+              selected={filters.accountNames}
+              onChange={(values) => {
+                setFilters(prev => {
+                  const updated = { ...prev, accountNames: values }
+                  const query: any = {}
+                  Object.entries(updated).forEach(([key, vals]) => {
+                    if ((vals as string[]).length > 0) {
+                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
+                    }
+                  })
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+                  return updated
+                })
+              }}
+            />
 
-            {/* Linked Account IDs */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {filterOptions.linkedAccountIds.map(id => (
-                  <label key={id} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.linkedAccountIds.includes(id)}
-                      onChange={() => updateFilters('linkedAccountIds', id)}
-                      className="w-4 h-4 text-[#1B7D3F] rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{id}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <MultiSelectDropdown
+              label="Linked Account IDs"
+              options={filterOptions.linkedAccountIds}
+              selected={filters.linkedAccountIds}
+              onChange={(values) => {
+                setFilters(prev => {
+                  const updated = { ...prev, linkedAccountIds: values }
+                  const query: any = {}
+                  Object.entries(updated).forEach(([key, vals]) => {
+                    if ((vals as string[]).length > 0) {
+                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
+                    }
+                  })
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+                  return updated
+                })
+              }}
+            />
 
-            {/* Charge Type */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {filterOptions.chargeType.map(type => (
-                  <label key={type} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.chargeType.includes(type)}
-                      onChange={() => updateFilters('chargeType', type)}
-                      className="w-4 h-4 text-[#1B7D3F] rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{type}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <MultiSelectDropdown
+              label="Charge Type"
+              options={filterOptions.chargeType}
+              selected={filters.chargeType}
+              onChange={(values) => {
+                setFilters(prev => {
+                  const updated = { ...prev, chargeType: values }
+                  const query: any = {}
+                  Object.entries(updated).forEach(([key, vals]) => {
+                    if ((vals as string[]).length > 0) {
+                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
+                    }
+                  })
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+                  return updated
+                })
+              }}
+            />
 
-            {/* Regions */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {filterOptions.regions.map(region => (
-                  <label key={region} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={filters.regions.includes(region)}
-                      onChange={() => updateFilters('regions', region)}
-                      className="w-4 h-4 text-[#1B7D3F] rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{region}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+            <MultiSelectDropdown
+              label="Regions"
+              options={filterOptions.regions}
+              selected={filters.regions}
+              onChange={(values) => {
+                setFilters(prev => {
+                  const updated = { ...prev, regions: values }
+                  const query: any = {}
+                  Object.entries(updated).forEach(([key, vals]) => {
+                    if ((vals as string[]).length > 0) {
+                      query[key] = (vals as string[]).length === 1 ? (vals as string[])[0] : vals
+                    }
+                  })
+                  router.push({ pathname: router.pathname, query }, undefined, { shallow: true })
+                  return updated
+                })
+              }}
+            />
           </div>
 
           {/* Active Filters Display */}
