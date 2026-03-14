@@ -645,6 +645,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
               <select 
                 multiple
+                size={4}
                 value={selectedPayerAccounts}
                 onChange={(e) => {
                   const selected = Array.from(e.target.selectedOptions, option => option.value)
@@ -662,6 +663,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
               <select 
                 multiple
+                size={4}
                 value={selectedAccountNames}
                 onChange={(e) => {
                   const selected = Array.from(e.target.selectedOptions, option => option.value)
@@ -680,6 +682,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
               <select 
                 multiple
+                size={4}
                 value={selectedLinkedAccountIds}
                 onChange={(e) => {
                   const selected = Array.from(e.target.selectedOptions, option => option.value)
@@ -698,6 +701,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
               <select 
                 multiple
+                size={4}
                 value={selectedChargeTypes}
                 onChange={(e) => {
                   const selected = Array.from(e.target.selectedOptions, option => option.value)
@@ -716,6 +720,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
               <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
               <select 
                 multiple
+                size={5}
                 value={selectedRegions}
                 onChange={(e) => {
                   const selected = Array.from(e.target.selectedOptions, option => option.value)

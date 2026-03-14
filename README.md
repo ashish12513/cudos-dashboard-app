@@ -9,8 +9,11 @@ A modern, enterprise-grade AWS cost management and analytics platform built with
 - **Security Dashboard**: Security posture, compliance, and threat monitoring
 - **Trend Analysis**: Historical cost trends and forecasting
 - **QuickSight Integration**: Embedded CUDOS v5 dashboards
-- **Modern UI**: Responsive design with gradient themes and smooth animations
+- **Modern UI**: Responsive design with Redington green theme and smooth animations
 - **Secure Authentication**: Role-based access control
+- **Advanced Filtering**: Multi-select filters for Payer Accounts, Regions, Charge Types, and more
+- **Helpdesk Integration**: Ticket management with SLA monitoring
+- **Real AWS Data**: All metrics pull from actual AWS APIs (no hardcoded values)
 
 ## 🏗️ Architecture
 
@@ -22,11 +25,38 @@ A modern, enterprise-grade AWS cost management and analytics platform built with
 
 ## 📊 Dashboard Tabs
 
-1. **Overview**: Cost summary, budget tracking, and key metrics
-2. **Usage**: Resource consumption and utilization analytics
-3. **Compute**: EC2 instances, Lambda functions, and container metrics
-4. **Trends**: Historical analysis and cost forecasting
-5. **Security**: Security score, compliance status, and findings
+1. **Dashboard**: Comprehensive cost overview with billing, RI/SP analysis, and trends
+2. **Billing**: Executive billing summary with service and region breakdowns
+3. **RI/SP Summary**: Reserved Instance and Savings Plan coverage analysis
+4. **Trends**: Historical cost trends, forecasting, and anomaly detection
+5. **Support**: Helpdesk ticket management and SLA monitoring
+6. **SLA Monitor**: Service level agreement compliance tracking
+7. **Usage**: Resource consumption and utilization analytics
+8. **Compute**: EC2 instances, Lambda functions, and container metrics
+9. **Security**: Security score, compliance status, and findings
+
+## 🔍 Advanced Filtering
+
+The dashboard includes powerful multi-select filter controls:
+
+- **Payer Accounts**: Filter by AWS payer account
+- **Account Names**: Filter by environment (Production, Development, Staging, Testing)
+- **Linked Account IDs**: Select specific linked accounts
+- **Charge Type**: Filter by charge type (Usage, Tax, Support, Refund)
+- **Regions**: Select AWS regions (us-east-1, us-west-2, eu-west-1, ap-south-1, ap-southeast-1)
+
+**How to use**: Hold `Ctrl` (Windows/Linux) or `Cmd` (Mac) and click to select multiple options. Active filters appear as color-coded tags below the filter panel.
+
+For detailed filter usage, see [FILTER_USAGE_GUIDE.md](./FILTER_USAGE_GUIDE.md).
+
+## 🎨 Design Theme
+
+The dashboard uses Redington India's professional green color scheme:
+- **Primary Green**: #1B7D3F (Signature color)
+- **Light Green**: #2BA84F (Accent)
+- **Dark Green**: #155E31 (Deep shade)
+
+All components feature smooth gradients, professional shadows, and responsive design.
 
 ## 🛠️ Technology Stack
 
@@ -155,14 +185,26 @@ Your AWS user/role needs permissions for:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📚 Documentation
+
+- [DEPLOYMENT.md](./DEPLOYMENT.md) - Deployment guide for AWS Amplify, Docker, and ECS
+- [FILTER_USAGE_GUIDE.md](./FILTER_USAGE_GUIDE.md) - Guide for using dashboard filters
+- [DASHBOARD_IMPROVEMENTS_SUMMARY.md](./DASHBOARD_IMPROVEMENTS_SUMMARY.md) - Technical overview of latest improvements
+- [LATEST_UPDATES.md](./LATEST_UPDATES.md) - Complete changelog of recent updates
+- [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - Quick reference card for dashboard features
+- [HELPDESK_INTEGRATION.md](./HELPDESK_INTEGRATION.md) - Helpdesk/ITSM integration guide
+- [DATABASE_MIGRATION_GUIDE.md](./DATABASE_MIGRATION_GUIDE.md) - Database setup and migration guide
+
 ## 🆘 Support
 
 For support and questions:
 
 1. Check the [DEPLOYMENT.md](./DEPLOYMENT.md) guide
-2. Review AWS permissions and configuration
-3. Check application logs for errors
-4. Verify QuickSight dashboard accessibility
+2. Review [FILTER_USAGE_GUIDE.md](./FILTER_USAGE_GUIDE.md) for filter help
+3. Check [LATEST_UPDATES.md](./LATEST_UPDATES.md) for recent changes
+4. Review AWS permissions and configuration
+5. Check application logs for errors
+6. Verify QuickSight dashboard accessibility
 
 ## 🏢 Enterprise Features
 

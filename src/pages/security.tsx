@@ -102,17 +102,17 @@ export default function Security() {
           <p className="premium-subheader">Security posture, compliance status, and threat monitoring</p>
         </div>
 
-        <div className="premium-grid-4">
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('security')}>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('security')}>
             <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.securityScore >= 90 ? 'from-green-400 to-green-500' : 
-                metrics && metrics.securityScore >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                metrics && metrics.securityScore >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
+                metrics && metrics.securityScore >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
               }`}>🛡️</div>
               <div className="ml-4">
-                <p className="premium-text-label">Security Score</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.securityScore >= 90 ? 'text-green-600' : 
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Security Score</p>
+                <p className={`text-3xl font-bold leading-tight ${
+                  metrics && metrics.securityScore >= 90 ? 'text-[#1B7D3F]' : 
                   metrics && metrics.securityScore >= 70 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
                   {metrics?.securityScore || 0}%
@@ -121,16 +121,16 @@ export default function Security() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('compliance')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('compliance')}>
             <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.complianceScore >= 90 ? 'from-green-400 to-green-500' : 
-                metrics && metrics.complianceScore >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                metrics && metrics.complianceScore >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
+                metrics && metrics.complianceScore >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
               }`}>✅</div>
               <div className="ml-4">
-                <p className="premium-text-label">Compliance</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.complianceScore >= 90 ? 'text-green-600' : 
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Compliance</p>
+                <p className={`text-3xl font-bold leading-tight ${
+                  metrics && metrics.complianceScore >= 90 ? 'text-[#1B7D3F]' : 
                   metrics && metrics.complianceScore >= 70 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
                   {metrics?.complianceScore || 0}%
@@ -139,75 +139,69 @@ export default function Security() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('findings')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('findings')}>
             <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.criticalFindings > 0 ? 'from-red-400 to-red-500' : 'from-green-400 to-green-500'
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                metrics && metrics.criticalFindings > 0 ? 'bg-gradient-to-br from-red-500 to-red-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
               }`}>🚨</div>
               <div className="ml-4">
-                <p className="premium-text-label">Critical Findings</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.criticalFindings > 0 ? 'text-red-600' : 'text-green-600'
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Critical Findings</p>
+                <p className={`text-3xl font-bold leading-tight ${
+                  metrics && metrics.criticalFindings > 0 ? 'text-red-600' : 'text-[#1B7D3F]'
                 }`}>
                   {metrics?.criticalFindings || 0}
                 </p>
-                <p className="premium-text-muted">{metrics?.securityFindings || 0} total</p>
+                <p className="text-xs text-gray-500 font-medium">{metrics?.securityFindings || 0} total</p>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('mfa')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('mfa')}>
             <div className="flex items-center">
-              <div className={`premium-icon-box-gradient text-white ${
-                metrics && metrics.mfaPercentage >= 90 ? 'from-green-400 to-green-500' : 
-                metrics && metrics.mfaPercentage >= 70 ? 'from-yellow-400 to-yellow-500' : 'from-red-400 to-red-500'
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
+                metrics && metrics.mfaPercentage >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
+                metrics && metrics.mfaPercentage >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
               }`}>🔐</div>
               <div className="ml-4">
-                <p className="premium-text-label">MFA Enabled</p>
-                <p className={`premium-text-value ${
-                  metrics && metrics.mfaPercentage >= 90 ? 'text-green-600' : 
+                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">MFA Enabled</p>
+                <p className={`text-3xl font-bold leading-tight ${
+                  metrics && metrics.mfaPercentage >= 90 ? 'text-[#1B7D3F]' : 
                   metrics && metrics.mfaPercentage >= 70 ? 'text-yellow-600' : 'text-red-600'
                 }`}>
                   {metrics?.mfaPercentage || 0}%
                 </p>
-                <p className="premium-text-muted">{metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0}</p>
+                <p className="text-xs text-gray-500 font-medium">{metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0}</p>
               </div>
             </div>
           </div>
         </div>
 
         {metrics && (metrics.securityFindings > 0 || metrics.guardDutyFindings > 0) && (
-          <div className="premium-metric-card premium-hover-lift">
-            <h3 className="premium-section-header">
-              <span className="premium-section-divider from-red-600 to-pink-600"></span>
-              Security Findings
-            </h3>
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">🚨 Security Findings</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
+              <div className="text-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border border-red-200">
                 <div className="text-4xl font-bold text-red-600">{metrics.criticalFindings}</div>
-                <p className="premium-text-label mt-2">Critical</p>
+                <p className="text-sm font-semibold text-gray-700 mt-2">Critical</p>
               </div>
-              <div className="text-center">
+              <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl border border-yellow-200">
                 <div className="text-4xl font-bold text-yellow-600">{metrics.highFindings}</div>
-                <p className="premium-text-label mt-2">High</p>
+                <p className="text-sm font-semibold text-gray-700 mt-2">High</p>
               </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-600">{metrics.guardDutyFindings}</div>
-                <p className="premium-text-label mt-2">GuardDuty</p>
+              <div className="text-center p-6 bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl border border-[#1B7D3F]/30">
+                <div className="text-4xl font-bold text-[#1B7D3F]">{metrics.guardDutyFindings}</div>
+                <p className="text-sm font-semibold text-gray-700 mt-2">GuardDuty</p>
               </div>
             </div>
           </div>
         )}
 
         {metrics && metrics.recommendations.length > 0 && (
-          <div className="premium-metric-card premium-hover-lift">
-            <h3 className="premium-section-header">
-              <span className="premium-section-divider from-purple-600 to-pink-600"></span>
-              Security Recommendations
-            </h3>
+          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">💡 Security Recommendations</h3>
             <div className="space-y-4">
               {metrics.recommendations.map((rec, index) => (
-                <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-gray-100">
+                <div key={index} className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm border border-[#1B7D3F]/20">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getPriorityColor(rec.priority)}`}>
