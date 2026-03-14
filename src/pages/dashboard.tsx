@@ -1,4 +1,5 @@
 import Layout from '../components/Layout'
+import MultiSelectDropdown from '../components/MultiSelectDropdown'
 import { useEffect, useState } from 'react'
 
 interface DashboardData {
@@ -641,101 +642,36 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
-              <select 
-                multiple
-                size={4}
-                value={selectedPayerAccounts}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value)
-                  setSelectedPayerAccounts(selected)
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
-              >
-                <option value="123456789012">123456789012</option>
-                <option value="210987654321">210987654321</option>
-                <option value="345678901234">345678901234</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
-              <select 
-                multiple
-                size={4}
-                value={selectedAccountNames}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value)
-                  setSelectedAccountNames(selected)
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
-              >
-                <option value="Production">Production</option>
-                <option value="Development">Development</option>
-                <option value="Staging">Staging</option>
-                <option value="Testing">Testing</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
-              <select 
-                multiple
-                size={4}
-                value={selectedLinkedAccountIds}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value)
-                  setSelectedLinkedAccountIds(selected)
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
-              >
-                <option value="acc-001">acc-001</option>
-                <option value="acc-002">acc-002</option>
-                <option value="acc-003">acc-003</option>
-                <option value="acc-004">acc-004</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
-              <select 
-                multiple
-                size={4}
-                value={selectedChargeTypes}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value)
-                  setSelectedChargeTypes(selected)
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
-              >
-                <option value="Usage">Usage</option>
-                <option value="Tax">Tax</option>
-                <option value="Support">Support</option>
-                <option value="Refund">Refund</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
-              <select 
-                multiple
-                size={5}
-                value={selectedRegions}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions, option => option.value)
-                  setSelectedRegions(selected)
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900"
-              >
-                <option value="us-east-1">us-east-1</option>
-                <option value="us-west-2">us-west-2</option>
-                <option value="eu-west-1">eu-west-1</option>
-                <option value="ap-south-1">ap-south-1</option>
-                <option value="ap-southeast-1">ap-southeast-1</option>
-              </select>
-              <p className="text-xs text-gray-500 mt-1">Ctrl/Cmd+Click to select multiple</p>
-            </div>
+            <MultiSelectDropdown
+              label="Payer Accounts"
+              options={['123456789012', '210987654321', '345678901234']}
+              selected={selectedPayerAccounts}
+              onChange={setSelectedPayerAccounts}
+            />
+            <MultiSelectDropdown
+              label="Account Names"
+              options={['Production', 'Development', 'Staging', 'Testing']}
+              selected={selectedAccountNames}
+              onChange={setSelectedAccountNames}
+            />
+            <MultiSelectDropdown
+              label="Linked Account IDs"
+              options={['acc-001', 'acc-002', 'acc-003', 'acc-004']}
+              selected={selectedLinkedAccountIds}
+              onChange={setSelectedLinkedAccountIds}
+            />
+            <MultiSelectDropdown
+              label="Charge Type"
+              options={['Usage', 'Tax', 'Support', 'Refund']}
+              selected={selectedChargeTypes}
+              onChange={setSelectedChargeTypes}
+            />
+            <MultiSelectDropdown
+              label="Regions"
+              options={['us-east-1', 'us-west-2', 'eu-west-1', 'ap-south-1', 'ap-southeast-1']}
+              selected={selectedRegions}
+              onChange={setSelectedRegions}
+            />
           </div>
 
           {/* Active Filters Display */}
