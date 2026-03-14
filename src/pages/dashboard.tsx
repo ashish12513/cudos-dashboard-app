@@ -572,6 +572,69 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
           </div>
         </div>
 
+        {/* Filters & Controls Section */}
+        <div className="bg-gradient-to-br from-[#1B7D3F]/5 to-[#2BA84F]/5 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-900">🔍 Filters & Controls</h3>
+            <button className="px-4 py-2 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-lg hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold text-sm">
+              ↻ Reset Filters
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Payer Accounts</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
+                <option>Select...</option>
+                <option>123456789012</option>
+                <option>210987654321</option>
+                <option>345678901234</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Account Names</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
+                <option>Select...</option>
+                <option>Production</option>
+                <option>Development</option>
+                <option>Staging</option>
+                <option>Testing</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Linked Account IDs</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
+                <option>Select...</option>
+                <option>acc-001</option>
+                <option>acc-002</option>
+                <option>acc-003</option>
+                <option>acc-004</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Charge Type</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
+                <option>Select...</option>
+                <option>Usage</option>
+                <option>Tax</option>
+                <option>Support</option>
+                <option>Refund</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Regions</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] bg-white text-gray-900">
+                <option>Select...</option>
+                <option>us-east-1</option>
+                <option>us-west-2</option>
+                <option>eu-west-1</option>
+                <option>ap-south-1</option>
+                <option>ap-southeast-1</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
         {/* Cost Overview Cards */}
         <div>
           <h2 className="text-xl font-bold text-gray-800 mb-4">💰 Cost Overview</h2>
