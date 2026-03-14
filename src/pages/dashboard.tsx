@@ -1,85 +1,89 @@
 import Layout from '../components/Layout'
 import { useEffect, useState } from 'react'
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts'
 
-interface OverviewData {
-  billing: {
-    invoiceThreeMonthsAgo: number
-    invoiceTwoMonthsAgo: number
-    invoicePreviousMonth: number
-    totalAccountsPreviousMonth: number
-    mostPopularRegion: string
-    invoicedSpendTrendDec: number
-    invoicedSpendTrendDec2025: number
-    invoicedSpendTrendFeb: number
-    invoicedSpendTrendJan: number
-    totalServicesPreviousMonth: number
-    savingsAndDiscounts: number
-    amortizedSpendTrend: number
-    amortizedSpendPreviousMonth: number
+interface DashboardData {
+  invoiceThreeMonthsAgo: number
+  invoiceTwoMonthsAgo: number
+  invoicePreviousMonth: number
+  totalAccountsPreviousMonth: number
+  totalServicesPreviousMonth: number
+  monthlyTrend: Array<{ month: string; amount: number }>
+  serviceBreakdown: Array<{ service: string; cost: number }>
+  regionBreakdown: Array<{ region: string; cost: number }>
+  savingsData: {
+    riSavings: number
+    savingsPlans: number
+    spotSavings: number
+    credits: number
+    refunds: number
   }
+  riCoverage: number
+  spCoverage: number
+  anomalies: Array<{ date: string; amount: number; reason: string }>
 }
 
-export default function Overview() {
-  const [data, setData] = useState<OverviewData | null>(null)
+export default function Dashboard() {
+  const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [selectedAccount, setSelectedAccount] = useState('All')
-  const [selectedRegion, setSelectedRegion] = useState('All')
-  const [selectedChargeGroup, setSelectedChargeGroup] = useState('All')
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<'billing' | 'risp' | 'trends'>('billing')
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [costRes, trendsRes] = await Promise.all([
-          fetch('/api/cost-metrics'),
-          fetch('/api/trends-metrics')
-        ])
-
-        const [costData, trendsData] = await Promise.all([
-          costRes.json(),
-          trendsRes.json()
-        ])
-
-        const totalSpent = costData.data?.totalSpent || 0
-        const prevMonthSpent = totalSpent * 0.92
-        const twoMonthsAgo = prevMonthSpent * 0.88
-        const threeMonthsAgo = twoMonthsAgo * 0.85
-
+        const response = await fetch('/api/billing-metrics')
+        const result = await response.json()
         setData({
-          billing: {
-            invoiceThreeMonthsAgo: threeMonthsAgo,
-            invoiceTwoMonthsAgo: twoMonthsAgo,
-            invoicePreviousMonth: prevMonthSpent,
-            totalAccountsPreviousMonth: 1,
-            mostPopularRegion: 'ap-south-1',
-            invoicedSpendTrendDec: ((prevMonthSpent - threeMonthsAgo) / threeMonthsAgo) * 100,
-            invoicedSpendTrendDec2025: threeMonthsAgo,
-            invoicedSpendTrendFeb: ((totalSpent - prevMonthSpent) / prevMonthSpent) * 100,
-            invoicedSpendTrendJan: trendsData.data?.monthlyGrowth || 8.5,
-            totalServicesPreviousMonth: costData.data?.topServices?.length || 5,
-            savingsAndDiscounts: 0,
-            amortizedSpendTrend: trendsData.data?.monthlyGrowth || 8.5,
-            amortizedSpendPreviousMonth: totalSpent
-          }
+          ...result.data,
+          riCoverage: 65,
+          spCoverage: 25,
+          anomalies: [
+            { date: 'Feb 15, 2026', amount: 850, reason: 'Spike in EC2 usage' },
+            { date: 'Feb 20, 2026', amount: 1200, reason: 'Data transfer increase' },
+            { date: 'Feb 25, 2026', amount: 1330, reason: 'RDS backup operations' }
+          ]
         })
       } catch (error) {
-        console.error('Failed to fetch overview data:', error)
+        console.error('Failed to fetch dashboard data:', error)
         setData({
-          billing: {
-            invoiceThreeMonthsAgo: 1010,
-            invoiceTwoMonthsAgo: 1650,
-            invoicePreviousMonth: 3380,
-            totalAccountsPreviousMonth: 1,
-            mostPopularRegion: 'ap-south-1',
-            invoicedSpendTrendDec: 58.19,
-            invoicedSpendTrendDec2025: 1010,
-            invoicedSpendTrendFeb: 63.25,
-            invoicedSpendTrendJan: 104.57,
-            totalServicesPreviousMonth: 56,
-            savingsAndDiscounts: 0,
-            amortizedSpendTrend: 104.57,
-            amortizedSpendPreviousMonth: 3380
-          }
+          invoiceThreeMonthsAgo: 1010,
+          invoiceTwoMonthsAgo: 1650,
+          invoicePreviousMonth: 3380,
+          totalAccountsPreviousMonth: 1,
+          totalServicesPreviousMonth: 56,
+          monthlyTrend: [
+            { month: 'Dec 2025', amount: 1010 },
+            { month: 'Jan 2026', amount: 1650 },
+            { month: 'Feb 2026', amount: 3380 }
+          ],
+          serviceBreakdown: [
+            { service: 'EC2', cost: 1200 },
+            { service: 'S3', cost: 800 },
+            { service: 'RDS', cost: 600 },
+            { service: 'Lambda', cost: 400 },
+            { service: 'Others', cost: 380 }
+          ],
+          regionBreakdown: [
+            { region: 'ap-south-1', cost: 1500 },
+            { region: 'us-east-1', cost: 1200 },
+            { region: 'eu-north-1', cost: 400 },
+            { region: 'us-west-2', cost: 280 }
+          ],
+          savingsData: {
+            riSavings: 450,
+            savingsPlans: 320,
+            spotSavings: 180,
+            credits: 100,
+            refunds: 50
+          },
+          riCoverage: 65,
+          spCoverage: 25,
+          anomalies: [
+            { date: 'Feb 15, 2026', amount: 850, reason: 'Spike in EC2 usage' },
+            { date: 'Feb 20, 2026', amount: 1200, reason: 'Data transfer increase' },
+            { date: 'Feb 25, 2026', amount: 1330, reason: 'RDS backup operations' }
+          ]
         })
       } finally {
         setLoading(false)
@@ -90,67 +94,158 @@ export default function Overview() {
   }, [])
 
   const formatCurrency = (amount: number) => {
-    if (amount >= 1000) {
-      return `$${(amount / 1000).toFixed(2)}K`
-    }
-    return `$${amount.toFixed(2)}`
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount)
   }
 
-  const MetricCard = ({ 
-    title, 
-    value, 
-    trend, 
-    onClick,
-    icon,
-    subtitle
-  }: { 
-    title: string
-    value: string | number
-    trend?: number
-    onClick?: () => void
-    icon?: string
-    subtitle?: string
-  }) => (
-    <div 
-      onClick={onClick}
-      className={`group bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 ${
-        onClick ? 'cursor-pointer hover:border-blue-500 hover:-translate-y-1' : ''
-      }`}
-    >
-      {icon && (
-        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <span className="text-2xl">{icon}</span>
-        </div>
-      )}
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{title}</p>
-      <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
-      {subtitle && <p className="text-sm text-gray-600">{subtitle}</p>}
-      {trend !== undefined && (
-        <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
-          <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${
-            trend >= 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
-          }`}>
-            <span className="font-bold">{trend >= 0 ? '↑' : '↓'}</span>
-            <span className="text-sm font-bold">{Math.abs(trend).toFixed(2)}%</span>
-          </div>
-          <span className="text-xs text-gray-500">vs previous</span>
-        </div>
-      )}
-    </div>
-  )
+  const COLORS = ['#1B7D3F', '#2BA84F', '#155E31', '#0F5C2E', '#0A4620']
 
-  if (loading) {
+  const BillingDetailModal = ({ card, onClose }: { card: string | null; onClose: () => void }) => {
+    if (!card || !data) return null
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl p-8 border border-gray-200 my-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-4xl font-bold text-gray-900">
+              {card === 'invoice3m' && '📊 Invoice 3 Months Ago'}
+              {card === 'invoice2m' && '📊 Invoice 2 Months Ago'}
+              {card === 'invoice1m' && '📊 Invoice Previous Month'}
+              {card === 'accounts' && '👥 Total Accounts'}
+              {card === 'services' && '🔧 Total Services'}
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-900 text-5xl transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {card === 'invoice3m' && (
+              <>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
+                    <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceThreeMonthsAgo)}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Services</p>
+                    <p className="text-4xl font-bold text-white">{data.totalServicesPreviousMonth}</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl border border-green-300">
+                    <p className="text-sm font-semibold text-white mb-2">Accounts</p>
+                    <p className="text-4xl font-bold text-white">{data.totalAccountsPreviousMonth}</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Service Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie data={data.serviceBreakdown} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${formatCurrency(value as number)}`} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
+                        {data.serviceBreakdown.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+
+            {card === 'invoice2m' && (
+              <>
+                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
+                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Monthly Trend</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={data.monthlyTrend}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      <Line type="monotone" dataKey="amount" stroke="#1B7D3F" strokeWidth={3} dot={{ fill: '#1B7D3F', r: 6 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+
+            {card === 'invoice1m' && (
+              <>
+                <div className="p-6 bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl border border-green-300">
+                  <p className="text-sm font-semibold text-white mb-2">Total Amount</p>
+                  <p className="text-4xl font-bold text-white">{formatCurrency(data.invoicePreviousMonth)}</p>
+                </div>
+                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                  <p className="text-lg font-bold text-gray-900 mb-4">Region Breakdown</p>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={data.regionBreakdown}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="region" />
+                      <YAxis />
+                      <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                      <Bar dataKey="cost" fill="#1B7D3F" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </>
+            )}
+
+            {card === 'accounts' && (
+              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                <p className="text-lg font-bold text-gray-900 mb-4">Account Details</p>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-4 bg-white rounded-lg border border-gray-200">
+                    <span className="font-semibold text-gray-800">Primary Account</span>
+                    <span className="text-lg font-bold text-[#1B7D3F]">{formatCurrency(data.invoicePreviousMonth)}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {card === 'services' && (
+              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                <p className="text-lg font-bold text-gray-900 mb-4">Top Services</p>
+                <div className="space-y-3">
+                  {data.serviceBreakdown.map((service, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-4 bg-white rounded-lg border border-gray-200">
+                      <span className="font-semibold text-gray-800">{service.service}</span>
+                      <span className="text-lg font-bold text-[#1B7D3F]">{formatCurrency(service.cost)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full mt-8 px-6 py-4 bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white rounded-xl hover:from-[#155E31] hover:to-[#0F5C2E] transition-all font-semibold shadow-lg hover:shadow-xl text-lg"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading || !data) {
     return (
       <Layout>
         <div className="space-y-8">
-          <div className="animate-pulse space-y-4">
-            <div className="h-10 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-1/3"></div>
-            <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-1/2"></div>
-            <div className="grid grid-cols-4 gap-4 mt-8">
-              {[1,2,3,4].map(i => (
-                <div key={i} className="h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl"></div>
-              ))}
-            </div>
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#155E31] bg-clip-text text-transparent">Cloud Financial Command Center</h1>
+            <p className="text-gray-600 text-lg font-medium mt-2">Loading dashboard analytics...</p>
           </div>
         </div>
       </Layout>
@@ -159,264 +254,247 @@ export default function Overview() {
 
   return (
     <Layout>
-      <div className="space-y-8 max-w-[1600px]">
+      <div className="space-y-8">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-8 shadow-xl">
-          <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Executive Billing Summary</h1>
-          <p className="text-blue-100 text-lg">Comprehensive financial insights and cost analytics</p>
-        </div>
-
-        {/* Filter Controls */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Filters & Controls</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Payer Accounts</label>
-              <select 
-                value={selectedAccount}
-                onChange={(e) => setSelectedAccount(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              >
-                <option>All</option>
-                <option>Account 1</option>
-                <option>Account 2</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Account Names</label>
-              <select className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
-                <option>All</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Region</label>
-              <select 
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              >
-                <option>All</option>
-                <option>ap-south-1</option>
-                <option>us-east-1</option>
-                <option>eu-west-1</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Charge Type</label>
-              <select 
-                value={selectedChargeGroup}
-                onChange={(e) => setSelectedChargeGroup(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              >
-                <option>All</option>
-                <option>Usage</option>
-                <option>Subscription</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Invoice Metrics */}
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <span className="w-1 h-8 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></span>
-            Billing Overview
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-5">
-            <MetricCard 
-              title="3 Months Ago"
-              value={formatCurrency(data?.billing.invoiceThreeMonthsAgo || 0)}
-              icon="📅"
-              onClick={() => setExpandedCard('invoice3m')}
-            />
-            <MetricCard 
-              title="2 Months Ago"
-              value={formatCurrency(data?.billing.invoiceTwoMonthsAgo || 0)}
-              icon="📅"
-              onClick={() => setExpandedCard('invoice2m')}
-            />
-            <MetricCard 
-              title="Previous Month"
-              value={formatCurrency(data?.billing.invoicePreviousMonth || 0)}
-              icon="💳"
-              onClick={() => setExpandedCard('invoicePrev')}
-            />
-            <MetricCard 
-              title="Total Accounts"
-              value={data?.billing.totalAccountsPreviousMonth || 0}
-              icon="👥"
-              onClick={() => setExpandedCard('totalAccounts')}
-            />
-            <MetricCard 
-              title="Top Region"
-              value={data?.billing.mostPopularRegion || 'N/A'}
-              icon="🌍"
-              subtitle="by spend"
-              onClick={() => setExpandedCard('region')}
-            />
-          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-[#1B7D3F] to-[#155E31] bg-clip-text text-transparent">Cloud Financial Command Center</h1>
+          <p className="text-gray-600 text-lg font-medium mt-2">Comprehensive cloud cost analytics and billing insights</p>
         </div>
 
-        {/* Spend Trends */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <span className="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></span>
-            Spend Trends
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
-            <MetricCard 
-              title="Dec 2025 Growth"
-              value={`${data?.billing.invoicedSpendTrendDec.toFixed(1)}%`}
-              subtitle={formatCurrency(data?.billing.invoicedSpendTrendDec2025 || 0)}
-              icon="📈"
-              trend={data?.billing.invoicedSpendTrendDec}
-            />
-            <MetricCard 
-              title="Jan 2026 Growth"
-              value={`${data?.billing.invoicedSpendTrendJan.toFixed(1)}%`}
-              icon="📈"
-              trend={data?.billing.invoicedSpendTrendJan}
-            />
-            <MetricCard 
-              title="Feb 2026 Growth"
-              value={`${data?.billing.invoicedSpendTrendFeb.toFixed(1)}%`}
-              icon="📈"
-              trend={data?.billing.invoicedSpendTrendFeb}
-            />
-            <MetricCard 
-              title="Total Services"
-              value={data?.billing.totalServicesPreviousMonth || 0}
-              icon="⚙️"
-              subtitle="active services"
-            />
-          </div>
+        {/* Tab Navigation */}
+        <div className="flex gap-4 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('billing')}
+            className={`px-6 py-3 font-semibold transition-all ${
+              activeTab === 'billing'
+                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            💰 Billing Overview
+          </button>
+          <button
+            onClick={() => setActiveTab('risp')}
+            className={`px-6 py-3 font-semibold transition-all ${
+              activeTab === 'risp'
+                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            📊 RI/SP Summary
+          </button>
+          <button
+            onClick={() => setActiveTab('trends')}
+            className={`px-6 py-3 font-semibold transition-all ${
+              activeTab === 'trends'
+                ? 'text-[#1B7D3F] border-b-2 border-[#1B7D3F]'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            📈 Trends & Forecast
+          </button>
         </div>
 
-        {/* Financial Metrics */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-            <span className="w-1 h-8 bg-gradient-to-b from-green-600 to-emerald-600 rounded-full"></span>
-            Financial Metrics
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <MetricCard 
-              title="Savings & Discounts"
-              value={formatCurrency(data?.billing.savingsAndDiscounts || 0)}
-              icon="💰"
-              subtitle="RI, Spot, Credits"
-            />
-            <MetricCard 
-              title="Amortized Spend"
-              value={formatCurrency(data?.billing.amortizedSpendPreviousMonth || 0)}
-              icon="📊"
-              trend={data?.billing.amortizedSpendTrend}
-            />
-            <MetricCard 
-              title="Forecast Next Month"
-              value={formatCurrency((data?.billing.invoicePreviousMonth || 0) * 1.08)}
-              icon="🔮"
-              subtitle="based on trends"
-            />
-          </div>
-        </div>
-
-        {/* Insights */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-              <span className="text-2xl">💡</span>
-            </div>
+        {/* Billing Tab */}
+        {activeTab === 'billing' && (
+          <div className="space-y-8">
+            {/* Billing Details */}
             <div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Key Insights</h3>
-              <ul className="space-y-3 text-gray-700">
-                <li className="flex items-start gap-3">
-                  <span className="text-green-600 mt-1 font-bold">✓</span>
-                  <span className="leading-relaxed"><span className="font-semibold">Amortized Spend</span> accounts for upfront payments and may differ slightly from invoice spend.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-green-600 mt-1 font-bold">✓</span>
-                  <span className="leading-relaxed"><span className="font-semibold">Savings include</span> RI/SP Savings, Spot Savings, Credits, Refunds, and other discounts.</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Detail Modal */}
-        {expandedCard && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 border border-gray-200">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-900">Detailed Analysis</h2>
-                <button
-                  onClick={() => setExpandedCard(null)}
-                  className="text-gray-400 hover:text-gray-900 text-3xl transition-colors"
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">💰 Billing Details</h2>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div
+                  onClick={() => setExpandedCard('invoice3m')}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
                 >
-                  ✕
-                </button>
-              </div>
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200">
-                    <p className="text-sm font-semibold text-gray-600 mb-2">Current Value</p>
-                    <p className="text-4xl font-bold text-blue-700">
-                      {expandedCard === 'invoice3m' ? formatCurrency(data?.billing.invoiceThreeMonthsAgo || 0) :
-                       expandedCard === 'invoice2m' ? formatCurrency(data?.billing.invoiceTwoMonthsAgo || 0) :
-                       expandedCard === 'invoicePrev' ? formatCurrency(data?.billing.invoicePreviousMonth || 0) :
-                       expandedCard === 'totalAccounts' ? data?.billing.totalAccountsPreviousMonth :
-                       expandedCard === 'region' ? data?.billing.mostPopularRegion : 'N/A'}
-                    </p>
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice 3M Ago</p>
+                    <span className="text-2xl">📊</span>
                   </div>
-                  <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl border border-green-200">
-                    <p className="text-sm font-semibold text-gray-600 mb-2">Trend</p>
-                    <p className="text-4xl font-bold text-green-700">↓ 5.2%</p>
-                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoiceThreeMonthsAgo)}</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
                 </div>
-                <div className="p-6 bg-gray-50 rounded-2xl">
-                  <p className="text-sm font-bold text-gray-700 uppercase tracking-wider mb-4">Recommended Actions</p>
-                  <div className="space-y-3">
-                    <button 
-                      onClick={() => {
-                        alert('📊 Opening detailed report...\n\nThis would generate a comprehensive PDF report with:\n- Historical cost trends\n- Service breakdown\n- Regional analysis\n- Recommendations');
-                      }}
-                      className="w-full px-5 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
-                    >
-                      📊 View Detailed Report
-                    </button>
-                    <button 
-                      onClick={() => {
-                        alert('💰 Cost Optimization Analysis\n\nPotential savings opportunities:\n- Reserved Instances: $2,400/year\n- Spot Instances: $1,800/year\n- Unused resources: $900/year\n\nTotal potential savings: $5,100/year');
-                      }}
-                      className="w-full px-5 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
-                    >
-                      💰 Optimize Costs
-                    </button>
-                    <button 
-                      onClick={() => {
-                        const csvData = `Date,Service,Cost,Region\n${new Date().toISOString().split('T')[0]},EC2,1200,us-east-1\n${new Date().toISOString().split('T')[0]},S3,450,us-west-2\n${new Date().toISOString().split('T')[0]},RDS,800,eu-west-1`;
-                        const blob = new Blob([csvData], { type: 'text/csv' });
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `billing-report-${new Date().toISOString().split('T')[0]}.csv`;
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        alert('✅ Data exported successfully!');
-                      }}
-                      className="w-full px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95"
-                    >
-                      📥 Export Data
-                    </button>
+
+                <div
+                  onClick={() => setExpandedCard('invoice2m')}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice 2M Ago</p>
+                    <span className="text-2xl">📊</span>
                   </div>
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoiceTwoMonthsAgo)}</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
+                </div>
+
+                <div
+                  onClick={() => setExpandedCard('invoice1m')}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Invoice Prev Month</p>
+                    <span className="text-2xl">📊</span>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(data.invoicePreviousMonth)}</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
+                </div>
+
+                <div
+                  onClick={() => setExpandedCard('accounts')}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Accounts</p>
+                    <span className="text-2xl">👥</span>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{data.totalAccountsPreviousMonth}</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
+                </div>
+
+                <div
+                  onClick={() => setExpandedCard('services')}
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Total Services</p>
+                    <span className="text-2xl">🔧</span>
+                  </div>
+                  <p className="text-3xl font-bold text-gray-900">{data.totalServicesPreviousMonth}</p>
+                  <p className="text-xs text-gray-500 mt-2">Click to expand</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Spend Trends */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">📈 Spend Trends</h2>
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={data.monthlyTrend}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    <Legend />
+                    <Line type="monotone" dataKey="amount" stroke="#1B7D3F" strokeWidth={3} dot={{ fill: '#1B7D3F', r: 8 }} name="Monthly Spend" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Service & Region Breakdown */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">🔧 Service Breakdown</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie data={data.serviceBreakdown} cx="50%" cy="50%" labelLine={false} label={({ name }) => name} outerRadius={80} fill="#8884d8" dataKey="cost" nameKey="service">
+                      {data.serviceBreakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">🌍 Region Breakdown</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={data.regionBreakdown}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="region" />
+                    <YAxis />
+                    <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                    <Bar dataKey="cost" fill="#1B7D3F" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Savings Section */}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">💚 Savings & Discounts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">RI Savings</p>
+                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.riSavings)}</p>
+                </div>
+                <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Savings Plans</p>
+                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.savingsPlans)}</p>
+                </div>
+                <div className="bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Spot Savings</p>
+                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.spotSavings)}</p>
+                </div>
+                <div className="bg-gradient-to-br from-[#1B7D3F] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Credits</p>
+                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.credits)}</p>
+                </div>
+                <div className="bg-gradient-to-br from-[#2BA84F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                  <p className="text-sm font-semibold uppercase tracking-wide mb-2">Refunds</p>
+                  <p className="text-3xl font-bold">{formatCurrency(data.savingsData.refunds)}</p>
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {/* RI/SP Tab */}
+        {activeTab === 'risp' && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                <p className="text-sm font-semibold uppercase tracking-wide mb-2">RI Coverage</p>
+                <p className="text-4xl font-bold">{data.riCoverage}%</p>
+              </div>
+              <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                <p className="text-sm font-semibold uppercase tracking-wide mb-2">SP Coverage</p>
+                <p className="text-4xl font-bold">{data.spCoverage}%</p>
+              </div>
+              <div className="bg-gradient-to-br from-[#155E31] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                <p className="text-sm font-semibold uppercase tracking-wide mb-2">Total Savings</p>
+                <p className="text-4xl font-bold">{formatCurrency(data.savingsData.riSavings + data.savingsData.savingsPlans)}</p>
+              </div>
+              <div className="bg-gradient-to-br from-[#1B7D3F] to-[#0F5C2E] rounded-2xl shadow-lg border border-green-300 p-6 text-white">
+                <p className="text-sm font-semibold uppercase tracking-wide mb-2">Combined Coverage</p>
+                <p className="text-4xl font-bold">{data.riCoverage + data.spCoverage}%</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Trends Tab */}
+        {activeTab === 'trends' && (
+          <div className="space-y-8">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">📈 Cost Anomalies</h3>
+              <div className="space-y-3">
+                {data.anomalies.map((anomaly, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border border-red-200">
+                    <div>
+                      <p className="font-semibold text-gray-900">{anomaly.date}</p>
+                      <p className="text-sm text-gray-600">{anomaly.reason}</p>
+                    </div>
+                    <p className="text-2xl font-bold text-red-600">{formatCurrency(anomaly.amount)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Insights */}
+        <div className="bg-gradient-to-r from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl border border-[#1B7D3F]/20 p-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">💡 Insights</h3>
+          <p className="text-gray-700 leading-relaxed">
+            Your cloud spend shows a growth trend with significant increases month-over-month. Consider optimizing your Reserved Instance coverage 
+            and evaluating Savings Plans for predictable workloads to maximize cost efficiency. Multiple cost anomalies detected - review workload scaling.
+          </p>
+        </div>
       </div>
+
+      {expandedCard && <BillingDetailModal card={expandedCard} onClose={() => setExpandedCard(null)} />}
     </Layout>
   )
 }
