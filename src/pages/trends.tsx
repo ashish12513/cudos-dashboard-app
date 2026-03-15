@@ -87,8 +87,8 @@ export default function Trends() {
         </div>
 
         <div className="premium-grid-4">
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('monthly')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('monthly')}>
               <div className="flex items-center">
                 <div className={`premium-icon-box-gradient text-white ${
                   metrics && metrics.monthlyGrowth >= 0 ? 'from-green-300 to-green-400' : 'from-red-300 to-red-400'
@@ -96,8 +96,8 @@ export default function Trends() {
                   {metrics && metrics.monthlyGrowth >= 0 ? '📈' : '📉'}
                 </div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Monthly Growth</p>
-                  <p className="premium-text-value">
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Monthly Growth</p>
+                  <p className="text-3xl font-bold text-white">
                     {metrics ? `${metrics.monthlyGrowth >= 0 ? '+' : ''}${metrics.monthlyGrowth.toFixed(1)}%` : '0%'}
                   </p>
                 </div>
@@ -105,25 +105,25 @@ export default function Trends() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('forecast')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('forecast')}>
               <div className="flex items-center">
                 <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🔮</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Next Month Forecast</p>
-                  <p className="premium-text-value">${(metrics?.nextMonthForecast || 0).toLocaleString()}</p>
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Next Month Forecast</p>
+                  <p className="text-3xl font-bold text-white">${(metrics?.nextMonthForecast || 0).toLocaleString()}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('yoy')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('yoy')}>
               <div className="flex items-center">
                 <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">📊</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">YoY Growth</p>
-                  <p className="premium-text-value">
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">YoY Growth</p>
+                  <p className="text-3xl font-bold text-white">
                     {metrics ? `${metrics.yearlyGrowth >= 0 ? '+' : ''}${metrics.yearlyGrowth.toFixed(1)}%` : '0%'}
                   </p>
                 </div>
@@ -131,16 +131,16 @@ export default function Trends() {
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('efficiency')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('efficiency')}>
               <div className="flex items-center">
                 <div className={`premium-icon-box-gradient text-white ${
                   metrics && metrics.efficiencyScore > 80 ? 'from-green-300 to-green-400' : 
                   metrics && metrics.efficiencyScore > 60 ? 'from-yellow-300 to-yellow-400' : 'from-red-300 to-red-400'
                 }`}>🎯</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Efficiency Score</p>
-                  <p className="premium-text-value">
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Efficiency Score</p>
+                  <p className="text-3xl font-bold text-white">
                     {metrics?.efficiencyScore || 0}%
                   </p>
                 </div>

@@ -66,53 +66,53 @@ export default function Usage() {
         </div>
 
         <div className="premium-grid-4">
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('ec2')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('ec2')}>
               <div className="flex items-center">
                 <div className="premium-icon-box-gradient from-slate-300 to-slate-400 text-white">🖥️</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">EC2 Instances</p>
-                  <p className="premium-text-value">{metrics?.ec2Instances || 0}</p>
-                  <p className="premium-text-muted">{metrics?.runningInstances || 0} running</p>
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">EC2 Instances</p>
+                  <p className="text-3xl font-bold text-white">{metrics?.ec2Instances || 0}</p>
+                  <p className="text-sm font-medium text-white/70">{metrics?.runningInstances || 0} running</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('storage')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('storage')}>
               <div className="flex items-center">
                 <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">💾</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Storage</p>
-                  <p className="premium-text-value">{metrics?.storageUsageTB.toFixed(1) || '0'} TB</p>
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Storage</p>
+                  <p className="text-3xl font-bold text-white">{metrics?.storageUsageTB.toFixed(1) || '0'} TB</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('transfer')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('transfer')}>
               <div className="flex items-center">
                 <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🌐</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Data Transfer</p>
-                  <p className="premium-text-value">{metrics?.dataTransferGB.toLocaleString() || '0'} GB</p>
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Data Transfer</p>
+                  <p className="text-3xl font-bold text-white">{metrics?.dataTransferGB.toLocaleString() || '0'} GB</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="premium-metric-card premium-hover-lift cursor-pointer" onClick={() => setExpandedCard('utilization')}>
-            <div className="premium-metric-card-dark-box">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('utilization')}>
               <div className="flex items-center">
                 <div className={`premium-icon-box-gradient text-white ${
                   metrics && metrics.avgUtilization > 80 ? 'from-red-300 to-red-400' : 
                   metrics && metrics.avgUtilization > 60 ? 'from-yellow-300 to-yellow-400' : 'from-green-300 to-green-400'
                 }`}>⚡</div>
                 <div className="ml-4">
-                  <p className="premium-text-label">Avg Utilization</p>
-                  <p className="premium-text-value">{metrics?.avgUtilization || 0}%</p>
+                  <p className="text-xs font-semibold text-white/80 uppercase tracking-wider">Avg Utilization</p>
+                  <p className="text-3xl font-bold text-white">{metrics?.avgUtilization || 0}%</p>
                 </div>
               </div>
             </div>

@@ -171,43 +171,43 @@ export default function Support() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">Total Tickets</p>
               <p className="text-3xl font-bold">{metrics.total_tickets}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">Open Tickets</p>
               <p className="text-3xl font-bold">{metrics.open_tickets}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Met</p>
               <p className="text-3xl font-bold">{metrics.sla_met}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Breached</p>
               <p className="text-3xl font-bold">{metrics.sla_breached}</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Response</p>
               <p className="text-3xl font-bold">{metrics.avg_response_time_minutes}m</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-lg p-3 text-white">
+          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
               <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Resolution</p>
               <p className="text-3xl font-bold">{metrics.avg_resolution_time_hours}h</p>
             </div>
@@ -216,8 +216,8 @@ export default function Support() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Tickets by Priority</h3>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <h3 className="text-xl font-bold mb-6">Tickets by Priority</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie data={priorityData} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${value}`} outerRadius={80} fill="#8884d8" dataKey="value">
@@ -230,8 +230,8 @@ export default function Support() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Tickets by Status</h3>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <h3 className="text-xl font-bold mb-6">Tickets by Status</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={statusData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -245,9 +245,9 @@ export default function Support() {
         </div>
 
         {/* Ticket List */}
-        <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-8 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20 hover:border-[#1B7D3F]/40 transition-all">
+        <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-900">Recent Tickets</h3>
+            <h3 className="text-xl font-bold text-white">Recent Tickets</h3>
             <div className="flex gap-4">
               <input
                 type="text"
@@ -282,22 +282,22 @@ export default function Support() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Ticket ID</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Title</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Status</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Priority</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Created</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Response Time</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">SLA</th>
-                  <th className="text-left py-4 px-4 font-semibold text-gray-700">Action</th>
+                <tr className="border-b border-white/20">
+                  <th className="text-left py-4 px-4 font-semibold text-white">Ticket ID</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Title</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Status</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Priority</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Created</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Response Time</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">SLA</th>
+                  <th className="text-left py-4 px-4 font-semibold text-white">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-4 px-4 font-semibold text-[#1B7D3F]">{ticket.id}</td>
-                    <td className="py-4 px-4 text-gray-900">{ticket.title}</td>
+                  <tr key={ticket.id} className="border-b border-white/10 hover:bg-white/5 transition-colors">
+                    <td className="py-4 px-4 font-semibold text-white">{ticket.id}</td>
+                    <td className="py-4 px-4 text-white">{ticket.title}</td>
                     <td className="py-4 px-4">
                       <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${getStatusColor(ticket.status)}`}>
                         {ticket.status}
@@ -308,13 +308,13 @@ export default function Support() {
                         {ticket.priority}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-sm text-gray-600">{formatDate(ticket.created_time)}</td>
-                    <td className="py-4 px-4 text-sm text-gray-600">{calculateResponseTime(ticket)}</td>
+                    <td className="py-4 px-4 text-sm text-white/80">{formatDate(ticket.created_time)}</td>
+                    <td className="py-4 px-4 text-sm text-white/80">{calculateResponseTime(ticket)}</td>
                     <td className={`py-4 px-4 font-semibold ${getSLAColor(ticket.sla_status)}`}>{ticket.sla_status}</td>
                     <td className="py-4 px-4">
                       <button
                         onClick={() => setSelectedTicket(ticket)}
-                        className="text-[#1B7D3F] hover:text-[#155E31] font-semibold transition-colors"
+                        className="text-white hover:text-white/80 font-semibold transition-colors"
                       >
                         View
                       </button>
