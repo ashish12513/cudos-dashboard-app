@@ -103,74 +103,51 @@ export default function Security() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('security')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-white" onClick={() => setExpandedCard('security')}>
             <div className="flex items-center">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                metrics && metrics.securityScore >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
-                metrics && metrics.securityScore >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
-              }`}>🛡️</div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md bg-gradient-to-br from-green-400 to-green-500">🛡️</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Security Score</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics && metrics.securityScore >= 90 ? 'text-[#1B7D3F]' : 
-                  metrics && metrics.securityScore >= 70 ? 'text-yellow-600' : 'text-red-600'
-                }`}>
+                <p className="text-sm font-semibold uppercase tracking-wide">Security Score</p>
+                <p className="text-3xl font-bold leading-tight">
                   {metrics?.securityScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('compliance')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-white" onClick={() => setExpandedCard('compliance')}>
             <div className="flex items-center">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                metrics && metrics.complianceScore >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
-                metrics && metrics.complianceScore >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
-              }`}>✅</div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md bg-gradient-to-br from-green-400 to-green-500">✅</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Compliance</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics && metrics.complianceScore >= 90 ? 'text-[#1B7D3F]' : 
-                  metrics && metrics.complianceScore >= 70 ? 'text-yellow-600' : 'text-red-600'
-                }`}>
+                <p className="text-sm font-semibold uppercase tracking-wide">Compliance</p>
+                <p className="text-3xl font-bold leading-tight">
                   {metrics?.complianceScore || 0}%
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('findings')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-white" onClick={() => setExpandedCard('findings')}>
             <div className="flex items-center">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                metrics && metrics.criticalFindings > 0 ? 'bg-gradient-to-br from-red-500 to-red-600' : 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]'
-              }`}>🚨</div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md bg-gradient-to-br from-red-400 to-red-500">🚨</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">Critical Findings</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics && metrics.criticalFindings > 0 ? 'text-red-600' : 'text-[#1B7D3F]'
-                }`}>
+                <p className="text-sm font-semibold uppercase tracking-wide">Critical Findings</p>
+                <p className="text-3xl font-bold leading-tight">
                   {metrics?.criticalFindings || 0}
                 </p>
-                <p className="text-xs text-gray-500 font-medium">{metrics?.securityFindings || 0} total</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F]/10 to-[#2BA84F]/10 rounded-xl shadow-lg border border-[#1B7D3F]/30 p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 hover:from-[#1B7D3F]/20 hover:to-[#2BA84F]/20" onClick={() => setExpandedCard('mfa')}>
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105 text-white" onClick={() => setExpandedCard('mfa')}>
             <div className="flex items-center">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md ${
-                metrics && metrics.mfaPercentage >= 90 ? 'bg-gradient-to-br from-[#1B7D3F] to-[#155E31]' : 
-                metrics && metrics.mfaPercentage >= 70 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' : 'bg-gradient-to-br from-red-500 to-red-600'
-              }`}>🔐</div>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md bg-gradient-to-br from-blue-400 to-blue-500">🔐</div>
               <div className="ml-4">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">MFA Enabled</p>
-                <p className={`text-3xl font-bold leading-tight ${
-                  metrics && metrics.mfaPercentage >= 90 ? 'text-[#1B7D3F]' : 
-                  metrics && metrics.mfaPercentage >= 70 ? 'text-yellow-600' : 'text-red-600'
-                }`}>
+                <p className="text-sm font-semibold uppercase tracking-wide">MFA Enabled</p>
+                <p className="text-3xl font-bold leading-tight">
                   {metrics?.mfaPercentage || 0}%
                 </p>
-                <p className="text-xs text-gray-500 font-medium">{metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0}</p>
+                <p className="text-xs font-medium">{metrics?.mfaEnabled || 0} of {metrics?.iamUsers || 0}</p>
               </div>
             </div>
           </div>
