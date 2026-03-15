@@ -625,58 +625,59 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
         </div>
 
         {/* Filters & Controls Section */}
-        <div className="bg-gradient-to-br from-[#1B7D3F]/5 to-[#2BA84F]/5 rounded-2xl shadow-lg border border-[#1B7D3F]/20 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">🔍 Filters & Controls</h3>
-            <button 
-              onClick={resetFilters}
-              disabled={!hasActiveFilters}
-              className={`px-4 py-2 rounded-lg transition-all font-semibold text-sm ${
-                hasActiveFilters 
-                  ? 'bg-gradient-to-r from-[#1B7D3F] to-[#155E31] text-white hover:from-[#155E31] hover:to-[#0F5C2E]' 
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              ↻ Reset Filters
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-            <MultiSelectDropdown
-              label="Payer Accounts"
-              options={['123456789012', '210987654321', '345678901234']}
-              selected={selectedPayerAccounts}
-              onChange={setSelectedPayerAccounts}
-            />
-            <MultiSelectDropdown
-              label="Account Names"
-              options={['Production', 'Development', 'Staging', 'Testing']}
-              selected={selectedAccountNames}
-              onChange={setSelectedAccountNames}
-            />
-            <MultiSelectDropdown
-              label="Linked Account IDs"
-              options={['acc-001', 'acc-002', 'acc-003', 'acc-004']}
-              selected={selectedLinkedAccountIds}
-              onChange={setSelectedLinkedAccountIds}
-            />
-            <MultiSelectDropdown
-              label="Charge Type"
-              options={['Usage', 'Tax', 'Support', 'Refund']}
-              selected={selectedChargeTypes}
-              onChange={setSelectedChargeTypes}
-            />
-            <MultiSelectDropdown
-              label="Regions"
-              options={['us-east-1', 'us-west-2', 'eu-west-1', 'ap-south-1', 'ap-southeast-1']}
-              selected={selectedRegions}
-              onChange={setSelectedRegions}
-            />
-          </div>
+        <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
+          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white">🔍 Filters & Controls</h3>
+              <button 
+                onClick={resetFilters}
+                disabled={!hasActiveFilters}
+                className={`px-4 py-2 rounded-lg transition-all font-semibold text-sm ${
+                  hasActiveFilters 
+                    ? 'bg-gradient-to-r from-[#2BA84F] to-[#1B7D3F] text-white hover:from-[#1B7D3F] hover:to-[#155E31]' 
+                    : 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                }`}
+              >
+                ↻ Reset Filters
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+              <MultiSelectDropdown
+                label="Payer Accounts"
+                options={['123456789012', '210987654321', '345678901234']}
+                selected={selectedPayerAccounts}
+                onChange={setSelectedPayerAccounts}
+              />
+              <MultiSelectDropdown
+                label="Account Names"
+                options={['Production', 'Development', 'Staging', 'Testing']}
+                selected={selectedAccountNames}
+                onChange={setSelectedAccountNames}
+              />
+              <MultiSelectDropdown
+                label="Linked Account IDs"
+                options={['acc-001', 'acc-002', 'acc-003', 'acc-004']}
+                selected={selectedLinkedAccountIds}
+                onChange={setSelectedLinkedAccountIds}
+              />
+              <MultiSelectDropdown
+                label="Charge Type"
+                options={['Usage', 'Tax', 'Support', 'Refund']}
+                selected={selectedChargeTypes}
+                onChange={setSelectedChargeTypes}
+              />
+              <MultiSelectDropdown
+                label="Regions"
+                options={['us-east-1', 'us-west-2', 'eu-west-1', 'ap-south-1', 'ap-southeast-1']}
+                selected={selectedRegions}
+                onChange={setSelectedRegions}
+              />
+            </div>
 
-          {/* Active Filters Display */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2 pt-4 border-t border-[#1B7D3F]/20">
+            {/* Active Filters Display */}
+            {hasActiveFilters && (
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-white/20">
               {selectedPayerAccounts.map(acc => (
                 <span key={`payer-${acc}`} className="px-3 py-1 bg-[#1B7D3F] text-white text-xs rounded-full flex items-center gap-2">
                   {acc}
@@ -708,7 +709,8 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
                 </span>
               ))}
             </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Cost Overview Cards */}
