@@ -235,7 +235,7 @@ export default function Support() {
         {/* Ticket List */}
         <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-white">Recent Tickets</h3>
+            <h3 className="text-xl font-bold text-white">📋 Recent Tickets</h3>
             <div className="flex gap-4">
               <input
                 type="text"
