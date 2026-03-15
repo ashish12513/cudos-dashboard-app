@@ -121,21 +121,18 @@ export default function Compute() {
 
         <div className="premium-grid-2">
           {metrics && metrics.topInstanceTypes.length > 0 && (
-            <div className="premium-metric-card premium-hover-lift">
-              <h3 className="premium-section-header">
-                <span className="premium-section-divider from-blue-600 to-indigo-600"></span>
-                Top Instance Types
-              </h3>
+            <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <h3 className="text-xl font-bold mb-6 text-white">Top Instance Types</h3>
               <div className="space-y-4">
                 {metrics.topInstanceTypes.map((instance, index) => (
                   <div key={index}>
                     <div className="flex justify-between mb-2">
-                      <span className="font-semibold text-gray-800">{instance.type}</span>
-                      <span className="premium-text-muted">{instance.count} instances</span>
+                      <span className="font-semibold text-white">{instance.type}</span>
+                      <span className="text-white/80">{instance.count} instances</span>
                     </div>
-                    <div className="premium-progress">
+                    <div className="w-full bg-white/20 rounded-full h-2">
                       <div 
-                        className="premium-progress-bar bg-gradient-to-r from-blue-500 to-indigo-600"
+                        className="bg-gradient-to-r from-blue-300 to-blue-400 h-2 rounded-full"
                         style={{ width: `${(instance.count / (metrics.topInstanceTypes[0]?.count || 1)) * 100}%` }}
                       ></div>
                     </div>
@@ -146,16 +143,13 @@ export default function Compute() {
           )}
 
           {metrics && metrics.computeServices.length > 0 && (
-            <div className="premium-metric-card premium-hover-lift">
-              <h3 className="premium-section-header">
-                <span className="premium-section-divider from-purple-600 to-pink-600"></span>
-                Compute Service Costs
-              </h3>
+            <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <h3 className="text-xl font-bold mb-6 text-white">Compute Service Costs</h3>
               <div className="space-y-4">
                 {metrics.computeServices.map((service, index) => (
-                  <div key={index} className="flex justify-between items-center premium-divider pb-4 last:border-0 last:pb-0">
-                    <span className="premium-text-muted">{service.service}</span>
-                    <span className="font-bold text-gray-900">{formatCurrency(service.cost)}</span>
+                  <div key={index} className="flex justify-between items-center pb-4 border-b border-white/20 last:border-0 last:pb-0">
+                    <span className="text-white/80">{service.service}</span>
+                    <span className="font-bold text-white">{formatCurrency(service.cost)}</span>
                   </div>
                 ))}
               </div>
