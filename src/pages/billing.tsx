@@ -389,7 +389,7 @@ export default function Billing() {
             {/* Invoice 3 Months Ago */}
             <div
               onClick={() => setExpandedCard('invoice3m')}
-              className="bg-gradient-to-br from-[#66BB6A] to-[#4CAF50] rounded-2xl shadow-lg border border-[#45a049] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-semibold text-white uppercase tracking-wide">Invoice 3M Ago</p>
@@ -402,7 +402,7 @@ export default function Billing() {
             {/* Invoice 2 Months Ago */}
             <div
               onClick={() => setExpandedCard('invoice2m')}
-              className="bg-gradient-to-br from-[#66BB6A] to-[#4CAF50] rounded-2xl shadow-lg border border-[#45a049] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-semibold text-white uppercase tracking-wide">Invoice 2M Ago</p>
@@ -415,7 +415,7 @@ export default function Billing() {
             {/* Invoice Previous Month */}
             <div
               onClick={() => setExpandedCard('invoice1m')}
-              className="bg-gradient-to-br from-[#66BB6A] to-[#4CAF50] rounded-2xl shadow-lg border border-[#45a049] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-semibold text-white uppercase tracking-wide">Invoice Prev Month</p>
@@ -428,7 +428,7 @@ export default function Billing() {
             {/* Total Accounts */}
             <div
               onClick={() => setExpandedCard('accounts')}
-              className="bg-gradient-to-br from-[#66BB6A] to-[#4CAF50] rounded-2xl shadow-lg border border-[#45a049] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-semibold text-white uppercase tracking-wide">Total Accounts</p>
@@ -441,7 +441,7 @@ export default function Billing() {
             {/* Total Services */}
             <div
               onClick={() => setExpandedCard('services')}
-              className="bg-gradient-to-br from-[#66BB6A] to-[#4CAF50] rounded-2xl shadow-lg border border-[#45a049] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
+              className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-105"
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm font-semibold text-white uppercase tracking-wide">Total Services</p>
