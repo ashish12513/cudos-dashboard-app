@@ -112,28 +112,25 @@ export default function Usage() {
         </div>
 
         {metrics && metrics.topServices.length > 0 && (
-          <div className="premium-metric-card premium-hover-lift">
-            <h3 className="premium-section-header">
-              <span className="premium-section-divider from-blue-600 to-indigo-600"></span>
-              Service Utilization
-            </h3>
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-xl font-bold mb-6 text-white">Service Utilization</h3>
             <div className="space-y-4">
               {metrics.topServices.map((service, index) => (
-                <div key={index} className="cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-all" onClick={() => setExpandedCard(`service-${index}`)}>
+                <div key={index} className="cursor-pointer p-3 rounded-lg hover:bg-white/10 transition-all" onClick={() => setExpandedCard(`service-${index}`)}>
                   <div className="flex justify-between mb-2">
-                    <span className="font-semibold text-gray-800">{service.service}</span>
-                    <span className="premium-text-muted">{service.utilization}%</span>
+                    <span className="font-semibold text-white">{service.service}</span>
+                    <span className="text-white/80">{service.utilization}%</span>
                   </div>
-                  <div className="premium-progress">
+                  <div className="w-full bg-white/20 rounded-full h-2">
                     <div 
-                      className={`premium-progress-bar ${
-                        service.utilization > 80 ? 'bg-gradient-to-r from-red-500 to-red-600' : 
-                        service.utilization > 60 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' : 'bg-gradient-to-r from-green-500 to-green-600'
+                      className={`h-2 rounded-full ${
+                        service.utilization > 80 ? 'bg-gradient-to-r from-red-400 to-red-500' : 
+                        service.utilization > 60 ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' : 'bg-gradient-to-r from-green-400 to-green-500'
                       }`}
                       style={{ width: `${service.utilization}%` }}
                     ></div>
                   </div>
-                  <span className="text-xs text-gray-500 mt-1 font-medium">{service.usage}</span>
+                  <span className="text-xs text-white/70 mt-1 font-medium">{service.usage}</span>
                 </div>
               ))}
             </div>
