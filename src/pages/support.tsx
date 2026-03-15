@@ -204,8 +204,8 @@ export default function Support() {
 
         {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl font-bold mb-6 text-white">Tickets by Priority</h3>
+          <div className="bg-gradient-to-br from-[#F1F8F5] to-[#E8F5E9] rounded-2xl shadow-lg border border-[#D4F1E4] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-xl font-bold mb-6 text-gray-800">Tickets by Priority</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie data={priorityData} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${value}`} outerRadius={80} fill="#8884d8" dataKey="value">
@@ -218,8 +218,8 @@ export default function Support() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl font-bold mb-6 text-white">Tickets by Status</h3>
+          <div className="bg-gradient-to-br from-[#F1F8F5] to-[#E8F5E9] rounded-2xl shadow-lg border border-[#D4F1E4] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-xl font-bold mb-6 text-gray-800">Tickets by Status</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={statusData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -233,9 +233,9 @@ export default function Support() {
         </div>
 
         {/* Ticket List */}
-        <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-gradient-to-br from-[#F1F8F5] to-[#E8F5E9] rounded-2xl shadow-lg border border-[#D4F1E4] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-white">📋 Recent Tickets</h3>
+            <h3 className="text-xl font-bold text-gray-800">📋 Recent Tickets</h3>
             <div className="flex gap-4">
               <input
                 type="text"
@@ -270,20 +270,20 @@ export default function Support() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-white/20">
-                  <th className="text-left py-4 px-4 font-semibold text-white">Ticket ID</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Title</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Status</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Priority</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Created</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Response Time</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">SLA</th>
-                  <th className="text-left py-4 px-4 font-semibold text-white">Action</th>
+                <tr className="border-b border-gray-300">
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Ticket ID</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Title</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Status</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Priority</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Created</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Response Time</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">SLA</th>
+                  <th className="text-left py-4 px-4 font-semibold text-gray-800">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className="border-b border-[#B0E0CC]/50 hover:bg-white/50 transition-colors">
+                  <tr key={ticket.id} className="border-b border-gray-200 hover:bg-white/50 transition-colors">
                     <td className="py-4 px-4 font-semibold text-[#1B7D3F]">{ticket.id}</td>
                     <td className="py-4 px-4 text-gray-800">{ticket.title}</td>
                     <td className="py-4 px-4">
@@ -296,13 +296,13 @@ export default function Support() {
                         {ticket.priority}
                       </span>
                     </td>
-                    <td className="py-4 px-4 text-sm text-white/80">{formatDate(ticket.created_time)}</td>
-                    <td className="py-4 px-4 text-sm text-white/80">{calculateResponseTime(ticket)}</td>
+                    <td className="py-4 px-4 text-sm text-gray-700">{formatDate(ticket.created_time)}</td>
+                    <td className="py-4 px-4 text-sm text-gray-700">{calculateResponseTime(ticket)}</td>
                     <td className={`py-4 px-4 font-semibold ${getSLAColor(ticket.sla_status)}`}>{ticket.sla_status}</td>
                     <td className="py-4 px-4">
                       <button
                         onClick={() => setSelectedTicket(ticket)}
-                        className="text-white hover:text-white/80 font-semibold transition-colors"
+                        className="text-[#1B7D3F] hover:text-[#155E31] font-semibold transition-colors"
                       >
                         View
                       </button>
