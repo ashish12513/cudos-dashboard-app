@@ -171,52 +171,40 @@ export default function Support() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">Total Tickets</p>
-              <p className="text-3xl font-bold">{metrics.total_tickets}</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">Total Tickets</p>
+            <p className="text-3xl font-bold">{metrics.total_tickets}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">Open Tickets</p>
-              <p className="text-3xl font-bold">{metrics.open_tickets}</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">Open Tickets</p>
+            <p className="text-3xl font-bold">{metrics.open_tickets}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Met</p>
-              <p className="text-3xl font-bold">{metrics.sla_met}</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Met</p>
+            <p className="text-3xl font-bold">{metrics.sla_met}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Breached</p>
-              <p className="text-3xl font-bold">{metrics.sla_breached}</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">SLA Breached</p>
+            <p className="text-3xl font-bold">{metrics.sla_breached}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Response</p>
-              <p className="text-3xl font-bold">{metrics.avg_response_time_minutes}m</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Response</p>
+            <p className="text-3xl font-bold">{metrics.avg_response_time_minutes}m</p>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] text-white">
-              <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Resolution</p>
-              <p className="text-3xl font-bold">{metrics.avg_resolution_time_hours}h</p>
-            </div>
+          <div className="bg-gradient-to-br from-[#2BA84F] to-[#1B7D3F] rounded-2xl shadow-lg border border-[#155E31] p-6 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+            <p className="text-sm font-semibold uppercase tracking-wide mb-2">Avg Resolution</p>
+            <p className="text-3xl font-bold">{metrics.avg_resolution_time_hours}h</p>
           </div>
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
             <h3 className="text-xl font-bold mb-6">Tickets by Priority</h3>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
@@ -230,7 +218,7 @@ export default function Support() {
             </ResponsiveContainer>
           </div>
 
-          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 text-white">
             <h3 className="text-xl font-bold mb-6">Tickets by Status</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={statusData}>
@@ -245,7 +233,7 @@ export default function Support() {
         </div>
 
         {/* Ticket List */}
-        <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+        <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-white">Recent Tickets</h3>
             <div className="flex gap-4">

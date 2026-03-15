@@ -77,51 +77,43 @@ export default function Compute() {
         </div>
 
         <div className="premium-grid-4">
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('ec2')}>
-              <div className="flex items-center">
-                <div className="premium-icon-box-gradient from-green-300 to-green-400 text-white">🖥️</div>
-                <div className="ml-4">
-                  <p className="premium-text-label text-white/80">EC2 Running</p>
-                  <p className="text-3xl font-bold text-white">{metrics?.ec2Running || 0}</p>
-                  <p className="text-sm font-medium text-white/70">{metrics?.ec2Stopped || 0} stopped</p>
-                </div>
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl p-6 border border-[#2BA84F] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer text-white" onClick={() => setExpandedCard('ec2')}>
+            <div className="flex items-center">
+              <div className="premium-icon-box-gradient from-green-300 to-green-400 text-white">🖥️</div>
+              <div className="ml-4">
+                <p className="premium-text-label text-white/80">EC2 Running</p>
+                <p className="text-3xl font-bold text-white">{metrics?.ec2Running || 0}</p>
+                <p className="text-sm font-medium text-white/70">{metrics?.ec2Stopped || 0} stopped</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('lambda')}>
-              <div className="flex items-center">
-                <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">⚡</div>
-                <div className="ml-4">
-                  <p className="premium-text-label text-white/80">Lambda Functions</p>
-                  <p className="text-3xl font-bold text-white">{metrics?.lambdaFunctions || 0}</p>
-                </div>
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl p-6 border border-[#2BA84F] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer text-white" onClick={() => setExpandedCard('lambda')}>
+            <div className="flex items-center">
+              <div className="premium-icon-box-gradient from-blue-300 to-blue-400 text-white">⚡</div>
+              <div className="ml-4">
+                <p className="premium-text-label text-white/80">Lambda Functions</p>
+                <p className="text-3xl font-bold text-white">{metrics?.lambdaFunctions || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('ecs')}>
-              <div className="flex items-center">
-                <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🐳</div>
-                <div className="ml-4">
-                  <p className="premium-text-label text-white/80">ECS Clusters</p>
-                  <p className="text-3xl font-bold text-white">{metrics?.ecsClusters || 0}</p>
-                </div>
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl p-6 border border-[#2BA84F] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer text-white" onClick={() => setExpandedCard('ecs')}>
+            <div className="flex items-center">
+              <div className="premium-icon-box-gradient from-purple-300 to-purple-400 text-white">🐳</div>
+              <div className="ml-4">
+                <p className="premium-text-label text-white/80">ECS Clusters</p>
+                <p className="text-3xl font-bold text-white">{metrics?.ecsClusters || 0}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-            <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl p-6 border border-[#0F5C2E] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 hover:from-[#155E31] hover:to-[#0F5C2E] cursor-pointer text-white" onClick={() => setExpandedCard('total')}>
-              <div className="flex items-center">
-                <div className="premium-icon-box-gradient from-amber-300 to-amber-400 text-white">📊</div>
-                <div className="ml-4">
-                  <p className="premium-text-label text-white/80">Total Resources</p>
-                  <p className="text-3xl font-bold text-white">{metrics?.totalCompute || 0}</p>
-                </div>
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl p-6 border border-[#2BA84F] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 cursor-pointer text-white" onClick={() => setExpandedCard('total')}>
+            <div className="flex items-center">
+              <div className="premium-icon-box-gradient from-amber-300 to-amber-400 text-white">📊</div>
+              <div className="ml-4">
+                <p className="premium-text-label text-white/80">Total Resources</p>
+                <p className="text-3xl font-bold text-white">{metrics?.totalCompute || 0}</p>
               </div>
             </div>
           </div>

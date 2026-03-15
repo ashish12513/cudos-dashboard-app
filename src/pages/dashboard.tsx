@@ -626,7 +626,7 @@ ${service} - Storage,2.5 TB,Increasing,High,Archive old data,$150,$85`
 
         {/* Filters & Controls Section */}
         <div className="bg-gradient-to-br from-[#E8F5E9] to-[#C8E6C9] rounded-3xl p-4 shadow-md">
-          <div className="bg-gradient-to-br from-[#1B7D3F] to-[#155E31] rounded-2xl shadow-lg border border-[#0F5C2E] p-6">
+          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">🔍 Filters & Controls</h3>
               <button 

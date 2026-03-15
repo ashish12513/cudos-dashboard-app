@@ -45,20 +45,20 @@ export default function MultiSelectDropdown({
 
   return (
     <div ref={dropdownRef} className="relative">
-      <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-white mb-2">{label}</label>
       
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-2 border-2 border-[#1B7D3F] rounded-lg bg-gradient-to-r from-[#1B7D3F]/5 to-[#2BA84F]/5 text-gray-900 text-left flex justify-between items-center hover:border-[#155E31] hover:from-[#1B7D3F]/10 hover:to-[#2BA84F]/10 focus:outline-none focus:ring-2 focus:ring-[#1B7D3F] transition-all"
+        className="w-full px-4 py-2 border-2 border-white/30 rounded-lg bg-white/10 text-white text-left flex justify-between items-center hover:border-white/50 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white transition-all"
       >
-        <span className="text-sm font-medium text-gray-900">
+        <span className="text-sm font-medium text-white">
           {selected.length === 0 
             ? 'Select...' 
             : selected.length === 1 
             ? selected[0] 
             : `${selected.length} selected`}
         </span>
-        <span className={`text-[#1B7D3F] transition-transform font-bold ${isOpen ? 'rotate-180' : ''}`}>
+        <span className={`text-white transition-transform font-bold ${isOpen ? 'rotate-180' : ''}`}>
           ▼
         </span>
       </button>
@@ -96,7 +96,7 @@ export default function MultiSelectDropdown({
         </div>
       )}
 
-      <p className="text-xs text-gray-500 mt-1">Click to select multiple options</p>
+      <p className="text-xs text-white/70 mt-1">Click to select multiple options</p>
     </div>
   )
 }
