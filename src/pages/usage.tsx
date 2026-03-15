@@ -112,16 +112,16 @@ export default function Usage() {
         </div>
 
         {metrics && metrics.topServices.length > 0 && (
-          <div className="bg-gradient-to-br from-[#3BA856] to-[#2BA84F] rounded-2xl shadow-lg border border-[#2BA84F] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl font-bold mb-6 text-white">Service Utilization</h3>
+          <div className="bg-gradient-to-br from-[#F1F8F5] to-[#E8F5E9] rounded-2xl shadow-lg border border-[#D4F1E4] p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-xl font-bold mb-6 text-gray-800">Service Utilization</h3>
             <div className="space-y-4">
               {metrics.topServices.map((service, index) => (
-                <div key={index} className="cursor-pointer p-3 rounded-lg hover:bg-white/10 transition-all" onClick={() => setExpandedCard(`service-${index}`)}>
+                <div key={index} className="cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all" onClick={() => setExpandedCard(`service-${index}`)}>
                   <div className="flex justify-between mb-2">
-                    <span className="font-semibold text-white">{service.service}</span>
-                    <span className="text-white/80">{service.utilization}%</span>
+                    <span className="font-semibold text-gray-800">{service.service}</span>
+                    <span className="text-gray-600">{service.utilization}%</span>
                   </div>
-                  <div className="w-full bg-white/20 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full ${
                         service.utilization > 80 ? 'bg-gradient-to-r from-red-400 to-red-500' : 
@@ -130,7 +130,7 @@ export default function Usage() {
                       style={{ width: `${service.utilization}%` }}
                     ></div>
                   </div>
-                  <span className="text-xs text-white/70 mt-1 font-medium">{service.usage}</span>
+                  <span className="text-xs text-gray-600 mt-1 font-medium">{service.usage}</span>
                 </div>
               ))}
             </div>
